@@ -1,0 +1,6 @@
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="300" height="300" rx="8" fill="#E8457B"/>
+  <circle cx="150" cy="130" r="40" fill="rgba(255,255,255,0.2)"/>
+  <text x="150" y="145" text-anchor="middle" font-size="36">📸</text>
+  <text x="150" y="195" text-anchor="middle" font-family="Poppins, sans-serif" font-size="12" fill="#fff" opacity="0.8">@crokangol</text>
+</svg>
