@@ -1,5 +1,6 @@
 "use client"
 
+import { useRef } from "react"
 import { products } from "@/data/mock"
 import Image from "next/image"
 import FloatingCandies from "./FloatingCandies"
@@ -18,6 +19,14 @@ const candies = [
 
 export default function FeaturedProducts() {
   const { addItem } = useCart()
+  const scrollRef = useRef<HTMLDivElement>(null)
+
+  const scroll = (dir: "left" | "right") => {
+    if (!scrollRef.current) return
+    const card = scrollRef.current.querySelector<HTMLElement>("[data-card]")
+    const step = card ? card.offsetWidth + 24 : 260
+    scrollRef.current.scrollBy({ left: dir === "left" ? -step : step, behavior: "smooth" })
+  }
 
   return (
     <section id="productos" className="relative py-20 bg-white overflow-hidden">
@@ -31,12 +40,31 @@ export default function FeaturedProducts() {
             Los más elegidos por nuestros clientes
           </p>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-          {products.map((product, i) => (
+        <div className="relative">
+          <button
+            onClick={() => scroll("left")}
+            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-dark hover:text-primary hover:scale-110 transition-all hidden sm:flex"
+            aria-label="Anterior"
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M15 18l-6-6 6-6" />
+            </svg>
+          </button>
+          <button
+            onClick={() => scroll("right")}
+            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-dark hover:text-primary hover:scale-110 transition-all hidden sm:flex"
+            aria-label="Siguiente"
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 18l6-6-6-6" />
+            </svg>
+          </button>
+          <div ref={scrollRef} className="w-[90%] mx-auto flex gap-6 overflow-x-auto snap-x snap-mandatory pb-4 scrollbar-hide">
+            {products.map((product) => (
             <div
               key={product.id}
-              className="bg-cream rounded-2xl overflow-hidden hover:-translate-y-1.5 transition-transform animate-fade-up shadow-sm"
-              style={{ animationDelay: `${i * 0.08}s` }}
+              data-card
+              className="snap-start shrink-0 w-[200px] sm:w-[240px] bg-cream rounded-2xl overflow-hidden hover:-translate-y-1.5 transition-transform shadow-sm"
             >
               <div className="relative">
                 <Image
@@ -74,6 +102,7 @@ export default function FeaturedProducts() {
               </div>
             </div>
           ))}
+        </div>
         </div>
         <div className="text-center mt-10">
           <a

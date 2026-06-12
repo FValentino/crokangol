@@ -21,7 +21,7 @@ export default function Promotions() {
           Consultá por promociones combinadas.
         </p>
         <a
-          href="https://wa.me/5491123456789"
+          href="https://wa.me/5493624006615"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-block bg-white text-primary font-semibold px-10 py-3.5 rounded-full hover:scale-105 transition-transform shadow-lg"

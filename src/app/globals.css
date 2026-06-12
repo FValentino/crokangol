@@ -61,8 +61,19 @@ body {
   width: 100%;
   margin: 0;
   padding: 0;
+  color: black
+}
+
+button {
+  cursor: pointer;
 }
 
 html {
   scroll-behavior: smooth;
+}
+
+@utility scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
 }

@@ -25,7 +25,7 @@ export default function CartDrawer() {
   const { items, removeItem, updateQuantity, totalPrice, open, setOpen, clearCart } = useCart()
 
   const whatsappText = buildWhatsAppMessage(items, totalPrice)
-  const whatsappUrl = `https://wa.me/5491123456789?text=${encodeURIComponent(whatsappText)}`
+  const whatsappUrl = `https://wa.me/5493624006615?text=${encodeURIComponent(whatsappText)}`
 
   return (
     <>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fredoka, Poppins } from "next/font/google";
+import Navbar from "@/components/Navbar";
 import { CartProvider } from "@/context/CartContext";
 import CartDrawer from "@/components/CartDrawer";
 import FloatingCart from "@/components/FloatingCart";
@@ -32,7 +33,8 @@ export default function RootLayout({
   return (
     <html lang="es" className={`${fredoka.variable} ${poppins.variable}`}>
       <body className="font-body antialiased">
-        <CartProvider>
+         <CartProvider>
+          <Navbar />
           {children}
           <FloatingCart />
           <FloatingWhatsApp />

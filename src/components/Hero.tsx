@@ -47,7 +47,7 @@ export default function Hero() {
               Ver Productos
             </a>
             <a
-              href="https://wa.me/5491123456789"
+              href="https://wa.me/5493624006615"
               target="_blank"
               rel="noopener noreferrer"
               className="bg-white text-dark font-semibold px-8 py-3.5 rounded-full text-center border-2 border-gray/20 hover:scale-105 transition-transform"
