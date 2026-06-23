@@ -5,6 +5,8 @@ import { Category } from "@/backend/domain/category/Category.entity"
 import { Product } from "@/backend/domain/product/Product.entity"
 import { ProductPhoto } from "@/backend/domain/product/ProductPhoto.entity"
 import { Client } from "@/backend/domain/client/Client.entity"
+import { Cart } from "@/backend/domain/cart/Cart.entity"
+import { CartItem } from "@/backend/domain/cart/CartItem.entity"
 import { Order } from "@/backend/domain/order/Order.entity"
 import { OrderItem } from "@/backend/domain/order/OrderItem.entity"
 
@@ -14,6 +16,8 @@ const entities = [
   Product,
   ProductPhoto,
   Client,
+  Cart,
+  CartItem,
   Order,
   OrderItem,
 ]
