@@ -1,12 +1,12 @@
 import "reflect-metadata"
 import { DataSource } from "typeorm"
-import { Store } from "@/backend/modules/stores/models/Store.entity"
-import { Category } from "@/backend/modules/categories/models/Category.entity"
-import { Product } from "@/backend/modules/products/models/Product.entity"
-import { ProductPhoto } from "@/backend/modules/products/models/ProductPhoto.entity"
-import { Client } from "@/backend/modules/clients/models/Client.entity"
-import { Order } from "@/backend/modules/orders/models/Order.entity"
-import { OrderItem } from "@/backend/modules/orders/models/OrderItem.entity"
+import { Store } from "@/backend/domain/store/Store.entity"
+import { Category } from "@/backend/domain/category/Category.entity"
+import { Product } from "@/backend/domain/product/Product.entity"
+import { ProductPhoto } from "@/backend/domain/product/ProductPhoto.entity"
+import { Client } from "@/backend/domain/client/Client.entity"
+import { Order } from "@/backend/domain/order/Order.entity"
+import { OrderItem } from "@/backend/domain/order/OrderItem.entity"
 
 const entities = [
   Store,
