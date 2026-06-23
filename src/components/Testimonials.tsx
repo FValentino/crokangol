@@ -37,7 +37,7 @@ export default function Testimonials() {
           {testimonials.map((t, i) => (
             <div
               key={t.id}
-              className="bg-white rounded-2xl p-6 shadow-sm hover:-translate-y-1.5 transition-transform animate-fade-up"
+              className="bg-white rounded-2xl p-6 shadow-sm hover:-translate-y-1.5 hover:shadow-lg transition-all animate-fade-up"
               style={{ animationDelay: `${i * 0.12}s` }}
             >
               <Stars count={t.rating} />

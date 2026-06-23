@@ -30,7 +30,7 @@ export default function Categories() {
             <a
               key={cat.id}
               href={`#${cat.id}`}
-              className={`${cat.bgColor} rounded-2xl p-6 flex flex-col items-center text-center hover:-translate-y-1.5 transition-transform cursor-pointer animate-fade-up`}
+              className={`${cat.bgColor} rounded-2xl p-6 flex flex-col items-center text-center hover:-translate-y-1.5 hover:shadow-lg transition-all cursor-pointer animate-fade-up`}
               style={{ animationDelay: `${i * 0.1}s` }}
             >
               <span className="text-4xl mb-3">{cat.icon}</span>

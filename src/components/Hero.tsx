@@ -17,7 +17,7 @@ const floatingCandies = [
 
 export default function Hero() {
   return (
-    <section id="inicio" className="relative min-h-screen pt-16 flex items-center justify-center overflow-hidden bg-gradient-to-b from-cream to-pastel">
+    <section id="inicio" className="relative h-dvh pt-16 flex items-center justify-center overflow-hidden bg-gradient-to-b from-cream to-pastel">
       {floatingCandies.map((candy, i) => (
         <span
           key={i}
@@ -27,7 +27,7 @@ export default function Hero() {
           {candy.emoji}
         </span>
       ))}
-      <div className="relative z-10 container mx-auto px-4 py-24 flex flex-col lg:flex-row items-center gap-12 lg:gap-16">
+      <div className="relative z-10 container mx-auto px-4 py-12 md:py-24 flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
         <div className="flex-1 text-center lg:text-left">
           <span className="inline-block bg-secondary text-dark text-sm font-semibold px-4 py-1.5 rounded-full mb-6 animate-fade-up">
             🎉 Nueva temporada
@@ -57,9 +57,9 @@ export default function Hero() {
           </div>
         </div>
         <div className="flex-1 flex items-center justify-center gap-2 animate-fade-up" style={{ animationDelay: "0.4s" }}>
-          <CandyMascotLeft className="w-28 sm:w-36 md:w-44" />
-          <LollipopSVG className="w-8 sm:w-10 md:w-12 -mx-2 sm:-mx-1 relative z-10 drop-shadow-lg" />
-          <CandyMascotRight className="w-28 sm:w-36 md:w-44" />
+          <CandyMascotLeft className="w-24 sm:w-32 md:w-44" />
+          <LollipopSVG className="w-14 sm:w-16 md:w-20 -mx-3 sm:-mx-4 relative z-10 drop-shadow-lg" />
+          <CandyMascotRight className="w-24 sm:w-32 md:w-44" />
         </div>
       </div>
     </section>

@@ -64,7 +64,7 @@ export default function FeaturedProducts() {
             <div
               key={product.id}
               data-card
-              className="snap-start shrink-0 w-[200px] sm:w-[240px] bg-cream rounded-2xl overflow-hidden hover:-translate-y-1.5 transition-transform shadow-sm"
+              className="snap-start shrink-0 w-[200px] sm:w-[240px] bg-cream rounded-2xl overflow-hidden hover:-translate-y-1.5 hover:shadow-lg transition-all shadow-sm"
             >
               <div className="relative">
                 <Image
