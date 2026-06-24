@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest"
 import { CartService } from "./CartService"
 import { Cart } from "@/backend/domain/cart/Cart.entity"
 import { CartItem } from "@/backend/domain/cart/CartItem.entity"
+import { StoreProductRepository } from "@/backend/domain/store-product/StoreProductRepository"
 
 function createMockCartRepo() {
   return {
@@ -14,10 +15,10 @@ function createMockCartRepo() {
   }
 }
 
-function createMockProductRepo() {
+function createMockStoreProductRepo() {
   return {
-    findById: vi.fn(),
-  }
+    findByStoreAndProductId: vi.fn(),
+  } as unknown as StoreProductRepository
 }
 
 const mockStore = { id: "store-1" }
@@ -36,14 +37,23 @@ function makeCart(overrides: Record<string, unknown> = {}): Cart {
   } as Cart
 }
 
-function makeProduct(overrides: Record<string, unknown> = {}) {
+function makeStoreProduct(overrides: Record<string, unknown> = {}) {
   return {
-    id: "prod-1",
-    name: "Chocolate",
-    slug: "chocolate",
-    pricePerBox: 100,
+    id: "sp-1",
+    store: { id: "store-1" },
+    product: {
+      id: "prod-1",
+      name: "Chocolate",
+      slug: "chocolate",
+      active: true,
+      photos: [{ id: "p1", url: "/photo.jpg", isPrimary: true, sortOrder: 1 }],
+    },
+    priceType: "per_box",
+    price: 100,
+    minQuantity: 1,
+    offerPrice: null,
+    offerUntil: null,
     active: true,
-    photos: [{ id: "p1", url: "/photo.jpg", isPrimary: true, sortOrder: 1 }],
     ...overrides,
   }
 }
@@ -51,13 +61,13 @@ function makeProduct(overrides: Record<string, unknown> = {}) {
 describe("CartService", () => {
   let service: CartService
   let cartRepo: ReturnType<typeof createMockCartRepo>
-  let productRepo: ReturnType<typeof createMockProductRepo>
+  let storeProductRepo: ReturnType<typeof createMockStoreProductRepo>
 
   beforeEach(() => {
     vi.clearAllMocks()
     cartRepo = createMockCartRepo()
-    productRepo = createMockProductRepo()
-    service = new CartService(cartRepo, productRepo)
+    storeProductRepo = createMockStoreProductRepo()
+    service = new CartService(cartRepo, storeProductRepo)
   })
 
   describe("getCart", () => {
@@ -83,10 +93,10 @@ describe("CartService", () => {
   describe("addItem", () => {
     it("should add a new item to the cart", async () => {
       const cart = makeCart()
-      const product = makeProduct()
+      const sp = makeStoreProduct()
 
       cartRepo.findByToken.mockResolvedValue(cart)
-      productRepo.findById.mockResolvedValue(product)
+      storeProductRepo.findByStoreAndProductId.mockResolvedValue(sp)
 
       const result = await service.addItem("token-1", "prod-1", 2)
 
@@ -108,10 +118,10 @@ describe("CartService", () => {
         subtotal: 100,
       }
       const cart = makeCart({ items: [existingItem] })
-      const product = makeProduct()
+      const sp = makeStoreProduct()
 
       cartRepo.findByToken.mockResolvedValue(cart)
-      productRepo.findById.mockResolvedValue(product)
+      storeProductRepo.findByStoreAndProductId.mockResolvedValue(sp)
 
       const result = await service.addItem("token-1", "prod-1", 2)
 
@@ -123,7 +133,7 @@ describe("CartService", () => {
     it("should throw if product not found", async () => {
       const cart = makeCart()
       cartRepo.findByToken.mockResolvedValue(cart)
-      productRepo.findById.mockResolvedValue(null)
+      storeProductRepo.findByStoreAndProductId.mockResolvedValue(null)
 
       await expect(service.addItem("token-1", "invalid", 1)).rejects.toThrow(
         "Product not found"
@@ -132,10 +142,10 @@ describe("CartService", () => {
 
     it("should throw if product is inactive", async () => {
       const cart = makeCart()
-      const product = makeProduct({ active: false })
+      const sp = makeStoreProduct({ product: { id: "prod-1", name: "Chocolate", active: false, photos: [] } })
 
       cartRepo.findByToken.mockResolvedValue(cart)
-      productRepo.findById.mockResolvedValue(product)
+      storeProductRepo.findByStoreAndProductId.mockResolvedValue(sp)
 
       await expect(service.addItem("token-1", "prod-1", 1)).rejects.toThrow(
         "Product is not active"

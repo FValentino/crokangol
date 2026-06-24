@@ -1,0 +1,85 @@
+import { Repository } from "typeorm"
+import { StoreProduct } from "./StoreProduct.entity"
+import { getDataSource } from "@/backend/lib/database"
+
+export class StoreProductRepository {
+  private repo: Repository<StoreProduct>
+
+  constructor() {
+    this.repo = {} as Repository<StoreProduct>
+  }
+
+  private async getRepo(): Promise<Repository<StoreProduct>> {
+    if (!this.repo.manager) {
+      const ds = await getDataSource()
+      this.repo = ds.getRepository(StoreProduct)
+    }
+    return this.repo
+  }
+
+  async findByStore(storeId: string): Promise<StoreProduct[]> {
+    const repo = await this.getRepo()
+    return repo.find({
+      where: { store: { id: storeId }, active: true },
+      relations: { product: { photos: true }, category: true },
+      order: { product: { name: "ASC" } },
+    })
+  }
+
+  async findByStoreAndCategory(
+    storeId: string,
+    categoryId: string
+  ): Promise<StoreProduct[]> {
+    const repo = await this.getRepo()
+    return repo.find({
+      where: { store: { id: storeId }, category: { id: categoryId }, active: true },
+      relations: { product: { photos: true }, category: true },
+    })
+  }
+
+  async findByStoreAndSlug(
+    storeId: string,
+    slug: string
+  ): Promise<StoreProduct | null> {
+    const repo = await this.getRepo()
+    return repo.findOne({
+      where: { store: { id: storeId }, product: { slug }, active: true },
+      relations: { product: { photos: true }, category: true },
+    })
+  }
+
+  async findByStoreAndProductId(
+    storeId: string,
+    productId: string
+  ): Promise<StoreProduct | null> {
+    const repo = await this.getRepo()
+    return repo.findOne({
+      where: { store: { id: storeId }, product: { id: productId } },
+      relations: { product: { photos: true } },
+    })
+  }
+
+  async findById(id: string): Promise<StoreProduct | null> {
+    const repo = await this.getRepo()
+    return repo.findOne({
+      where: { id },
+      relations: { product: { photos: true }, category: true, store: true },
+    })
+  }
+
+  async save(storeProduct: StoreProduct): Promise<StoreProduct> {
+    const repo = await this.getRepo()
+    return repo.save(storeProduct)
+  }
+
+  async update(id: string, data: Partial<StoreProduct>): Promise<StoreProduct | null> {
+    const repo = await this.getRepo()
+    await repo.update(id, data)
+    return this.findById(id)
+  }
+
+  async softDelete(id: string): Promise<void> {
+    const repo = await this.getRepo()
+    await repo.update(id, { active: false })
+  }
+}

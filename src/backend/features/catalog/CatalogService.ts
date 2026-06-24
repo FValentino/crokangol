@@ -1,4 +1,4 @@
-import { ProductRepository } from "@/backend/domain/product/ProductRepository"
+import { StoreProductRepository } from "@/backend/domain/store-product/StoreProductRepository"
 import { CategoryRepository } from "@/backend/domain/category/CategoryRepository"
 
 export interface CatalogFilters {
@@ -7,34 +7,34 @@ export interface CatalogFilters {
 }
 
 export class CatalogService {
-  private productRepo: ProductRepository
+  private storeProductRepo: StoreProductRepository
   private categoryRepo: CategoryRepository
 
   constructor(
-    productRepo?: ProductRepository,
+    storeProductRepo?: StoreProductRepository,
     categoryRepo?: CategoryRepository
   ) {
-    this.productRepo = productRepo ?? new ProductRepository()
+    this.storeProductRepo = storeProductRepo ?? new StoreProductRepository()
     this.categoryRepo = categoryRepo ?? new CategoryRepository()
   }
 
   async listProducts(storeId: string, filters?: CatalogFilters) {
     if (filters?.categoryId) {
-      return this.productRepo.findByCategory(storeId, filters.categoryId)
+      return this.storeProductRepo.findByStoreAndCategory(storeId, filters.categoryId)
     }
 
-    const products = await this.productRepo.findByStore(storeId)
+    const products = await this.storeProductRepo.findByStore(storeId)
 
     if (filters?.search) {
       const q = filters.search.toLowerCase()
-      return products.filter((p) => p.name.toLowerCase().includes(q))
+      return products.filter((sp) => sp.product.name.toLowerCase().includes(q))
     }
 
     return products
   }
 
   async getProductBySlug(storeId: string, slug: string) {
-    return this.productRepo.findBySlug(storeId, slug)
+    return this.storeProductRepo.findByStoreAndSlug(storeId, slug)
   }
 
   async listCategories(storeId: string) {

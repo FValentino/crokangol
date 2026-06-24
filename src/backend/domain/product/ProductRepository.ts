@@ -17,42 +17,24 @@ export class ProductRepository {
     return this.repo
   }
 
-  async findByStore(storeId: string): Promise<Product[]> {
+  async findAll(): Promise<Product[]> {
     const repo = await this.getRepo()
-    return repo.find({
-      where: { store: { id: storeId }, active: true },
-      relations: { photos: true, category: true },
-    })
+    return repo.find({ where: { active: true }, relations: { photos: true } })
   }
 
   async findById(id: string): Promise<Product | null> {
     const repo = await this.getRepo()
     return repo.findOne({
       where: { id },
-      relations: { photos: true, category: true },
+      relations: { photos: true },
     })
   }
 
-  async findBySlug(storeId: string, slug: string): Promise<Product | null> {
+  async findBySlug(slug: string): Promise<Product | null> {
     const repo = await this.getRepo()
     return repo.findOne({
-      where: { store: { id: storeId }, slug },
-      relations: { photos: true, category: true },
-    })
-  }
-
-  async findByCategory(
-    storeId: string,
-    categoryId: string
-  ): Promise<Product[]> {
-    const repo = await this.getRepo()
-    return repo.find({
-      where: {
-        store: { id: storeId },
-        category: { id: categoryId },
-        active: true,
-      },
-      relations: { photos: true, category: true },
+      where: { slug },
+      relations: { photos: true },
     })
   }
 
@@ -61,10 +43,7 @@ export class ProductRepository {
     return repo.save(product)
   }
 
-  async update(
-    id: string,
-    data: Partial<Product>
-  ): Promise<Product | null> {
+  async update(id: string, data: Partial<Product>): Promise<Product | null> {
     const repo = await this.getRepo()
     await repo.update(id, data)
     return this.findById(id)

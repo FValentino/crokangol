@@ -1,35 +1,25 @@
 "use server"
 
 import { ProductService } from "./ProductService"
-import { Product } from "@/backend/domain/product/Product.entity"
+import { getCurrentStore } from "@/backend/lib/store-context"
 
 const service = new ProductService()
 
-export async function getProductsByStore(storeId: string) {
-  return service.listByStore(storeId)
+export async function getAllProducts() {
+  return service.listAll()
 }
 
 export async function getProduct(id: string) {
   return service.getById(id)
 }
 
-export async function getProductBySlug(storeId: string, slug: string) {
-  return service.getBySlug(storeId, slug)
-}
-
-export async function getProductsByCategory(
-  storeId: string,
-  categoryId: string
-) {
-  return service.listByCategory(storeId, categoryId)
+export async function getProductBySlug(slug: string) {
+  return service.getBySlug(slug)
 }
 
 export async function createProduct(data: {
-  storeId: string
-  categoryId?: string
   name: string
   slug: string
-  pricePerBox: number
   weightKg: number
   lengthCm: number
   heightCm: number
@@ -42,11 +32,25 @@ export async function createProduct(data: {
 
 export async function updateProduct(
   id: string,
-  data: Partial<Product>
+  data: Partial<import("@/backend/domain/product/Product.entity").Product>
 ) {
   return service.update(id, data)
 }
 
 export async function deactivateProduct(id: string) {
   return service.deactivate(id)
+}
+
+export async function linkProductToStore(data: {
+  productId: string
+  categoryId?: string
+  priceType: "per_box" | "per_unit" | "both"
+  price: number
+  minQuantity?: number
+}) {
+  const store = await getCurrentStore()
+  return service.linkProductToStore({
+    storeId: store.id,
+    ...data,
+  })
 }

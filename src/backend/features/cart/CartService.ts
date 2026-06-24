@@ -1,15 +1,15 @@
 import { Cart } from "@/backend/domain/cart/Cart.entity"
 import { CartItem } from "@/backend/domain/cart/CartItem.entity"
 import { CartRepository } from "@/backend/domain/cart/CartRepository"
-import { ProductRepository } from "@/backend/domain/product/ProductRepository"
+import { StoreProductRepository } from "@/backend/domain/store-product/StoreProductRepository"
 
 export class CartService {
   private cartRepo: CartRepository
-  private productRepo: ProductRepository
+  private storeProductRepo: StoreProductRepository
 
-  constructor(cartRepo?: CartRepository, productRepo?: ProductRepository) {
+  constructor(cartRepo?: CartRepository, storeProductRepo?: StoreProductRepository) {
     this.cartRepo = cartRepo ?? new CartRepository()
-    this.productRepo = productRepo ?? new ProductRepository()
+    this.storeProductRepo = storeProductRepo ?? new StoreProductRepository()
   }
 
   async getCart(token: string): Promise<Cart | null> {
@@ -24,9 +24,10 @@ export class CartService {
     const cart = await this.cartRepo.findByToken(token)
     if (!cart) throw new Error("Cart not found")
 
-    const product = await this.productRepo.findById(productId)
-    if (!product) throw new Error("Product not found")
-    if (!product.active) throw new Error("Product is not active")
+    const storeId = cart.store.id
+    const storeProduct = await this.storeProductRepo.findByStoreAndProductId(storeId, productId)
+    if (!storeProduct) throw new Error("Product not found")
+    if (!storeProduct.product.active) throw new Error("Product is not active")
 
     const existing = cart.items.find((i) => i.productId === productId)
     if (existing) {
@@ -37,11 +38,11 @@ export class CartService {
       const item = new CartItem()
       item.cart = cart
       item.productId = productId
-      item.productName = product.name
-      item.productImage = product.photos?.find((p) => p.isPrimary)?.url ?? null
-      item.unitPrice = product.pricePerBox
+      item.productName = storeProduct.product.name
+      item.productImage = storeProduct.product.photos?.find((p) => p.isPrimary)?.url ?? null
+      item.unitPrice = storeProduct.price
       item.quantity = quantity
-      item.subtotal = product.pricePerBox * quantity
+      item.subtotal = storeProduct.price * quantity
       cart.items.push(item)
     }
 
