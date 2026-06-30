@@ -30,6 +30,13 @@ export class CartService {
     const cart = await this.cartRepo.findByToken(token)
     if (!cart) throw new Error("Cart not found")
 
+    // Reuse cart after checkout — reset status and clear old items
+    if (cart.status !== "active") {
+      cart.status = "active"
+      await this.cartRepo.save(cart)
+      await this.cartRepo.clearItems(cart.id)
+    }
+
     const storeId = cart.store.id
     const storeProduct = await this.storeProductRepo.findByStoreAndProductId(storeId, productId)
     if (!storeProduct) throw new Error("Product not found")
