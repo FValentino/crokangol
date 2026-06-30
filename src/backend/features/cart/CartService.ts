@@ -16,6 +16,12 @@ export class CartService {
     return this.cartRepo.findByToken(token)
   }
 
+  async getItems(token: string): Promise<CartItem[]> {
+    const cart = await this.cartRepo.findByToken(token)
+    if (!cart) return []
+    return this.cartRepo.findItemsByCartId(cart.id)
+  }
+
   async addItem(
     token: string,
     productId: string,

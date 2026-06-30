@@ -33,6 +33,14 @@ export async function getCart() {
   return service.getCart(token)
 }
 
+export async function getCartItems() {
+  const store = await getCurrentStore()
+  const token = await getOrCreateCartToken(store.domain)
+  const cart = await service.getCart(token)
+  if (!cart) return []
+  return service.getItems(cart.token)
+}
+
 export async function clearCart() {
   const store = await getCurrentStore()
   const token = await getOrCreateCartToken(store.domain)
