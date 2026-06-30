@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { ChevronDown } from "lucide-react"
 import { WHATSAPP_URL } from "@/lib/constants"
 
 const links = [
@@ -49,9 +50,7 @@ export default function Navbar() {
           <div className="hidden lg:block relative group">
             <button className="font-body text-sm text-dark/70 hover:text-primary font-medium px-4 py-2 rounded-full hover:bg-pastel transition-colors flex items-center gap-1 cursor-pointer">
               Productos
-              <svg className="w-3 h-3 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M6 9l6 6 6-6" />
-              </svg>
+              <ChevronDown className="w-3 h-3 mt-0.5" strokeWidth={2} />
             </button>
             <div className="absolute top-full left-2 mt-1 bg-white rounded-xl shadow-lg py-2 min-w-40 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
               <Link
@@ -76,9 +75,7 @@ export default function Navbar() {
               className="font-body text-sm text-dark/70 hover:text-primary font-medium px-4 py-2 rounded-full hover:bg-pastel transition-colors flex items-center gap-1 w-full cursor-pointer"
             >
               Productos
-              <svg className={`w-3 h-3 mt-0.5 transition-transform ${mobileProductsOpen ? "rotate-180" : ""}`} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M6 9l6 6 6-6" />
-              </svg>
+              <ChevronDown className={`w-3 h-3 mt-0.5 transition-transform ${mobileProductsOpen ? "rotate-180" : ""}`} strokeWidth={2} />
             </button>
             {mobileProductsOpen && (
               <div className="pl-6 flex flex-col gap-1 mt-1">

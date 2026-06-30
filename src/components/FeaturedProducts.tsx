@@ -8,6 +8,7 @@ import type { CatalogProduct } from "@/lib/types"
 import FloatingCandies from "./FloatingCandies"
 import ProductCard from "./ProductCard"
 import { ProductCardSkeleton } from "./Skeleton"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useCart } from "@/context/CartContext"
 
 const candies = [
@@ -65,18 +66,14 @@ export default function FeaturedProducts() {
             className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-dark hover:text-primary hover:scale-110 transition-all hidden sm:flex"
             aria-label="Anterior"
           >
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
+            <ChevronLeft className="w-5 h-5" strokeWidth={2.5} />
           </button>
           <button
             onClick={() => scroll("right")}
             className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-dark hover:text-primary hover:scale-110 transition-all hidden sm:flex"
             aria-label="Siguiente"
           >
-            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M9 18l6-6-6-6" />
-            </svg>
+            <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
           </button>
           <div ref={scrollRef} className="w-[90%] mx-auto flex gap-6 overflow-x-auto snap-x snap-mandatory pb-4 scrollbar-hide">
             {isLoading
