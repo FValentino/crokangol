@@ -2,11 +2,8 @@
 
 import { useState } from "react"
 import { useCart } from "@/context/CartContext"
+import { formatPrice } from "@/lib/mappers"
 import Image from "next/image"
-
-function formatPrice(n: number): string {
-  return "$" + n.toLocaleString("es-AR")
-}
 
 export default function CartDrawer() {
   const { items, removeItem, updateQuantity, totalPrice, open, setOpen, clearCart, checkout } = useCart()
