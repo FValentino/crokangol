@@ -1,12 +1,13 @@
 "use client"
 
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo, useEffect, useCallback } from "react"
 import { getCatalogProducts } from "@/backend/features/catalog/CatalogActions"
 import { getCatalogCategories } from "@/backend/features/catalog/CatalogActions"
 import { addToCart } from "@/backend/features/cart/CartActions"
 import { mapStoreProductToCatalog, mapCategoryToCatalog } from "@/lib/mappers"
 import type { CatalogProduct, CatalogCategory } from "@/lib/types"
 import { useCart } from "@/context/CartContext"
+import { useRouter, usePathname } from "next/navigation"
 import FloatingCandies from "@/components/FloatingCandies"
 import ProductCard from "@/components/ProductCard"
 import { ProductCardSkeleton, ErrorDisplay } from "@/components/Skeleton"
@@ -20,12 +21,22 @@ const candies = [
 
 export default function ProductosPage() {
   const { addItem } = useCart()
+  const router = useRouter()
+  const pathname = usePathname()
   const [search, setSearch] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [products, setProducts] = useState<CatalogProduct[]>([])
   const [categories, setCategories] = useState<CatalogCategory[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(false)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const q = params.get("search") ?? ""
+    const cat = params.get("category")
+    setSearch(q)
+    setSelectedCategory(cat)
+  }, [])
 
   useEffect(() => {
     Promise.all([
@@ -39,6 +50,27 @@ export default function ProductosPage() {
       .catch(() => setError(true))
       .finally(() => setIsLoading(false))
   }, [])
+
+  const updateURL = useCallback(
+    (q: string, cat: string | null) => {
+      const params = new URLSearchParams()
+      if (q) params.set("search", q)
+      if (cat) params.set("category", cat)
+      const query = params.toString()
+      router.replace(`${pathname}${query ? `?${query}` : ""}`, { scroll: false })
+    },
+    [router, pathname],
+  )
+
+  const handleSearch = (q: string) => {
+    setSearch(q)
+    updateURL(q, selectedCategory)
+  }
+
+  const handleCategory = (cat: string | null) => {
+    setSelectedCategory(cat)
+    updateURL(search, cat)
+  }
 
   const filtered = useMemo(() => {
     return products.filter((p) => {
@@ -69,7 +101,7 @@ export default function ProductosPage() {
               <input
                 type="text"
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={(e) => handleSearch(e.target.value)}
                 placeholder="Buscar productos..."
                 className="w-full pl-12 pr-4 py-3 rounded-full bg-white border border-pastel font-body text-sm text-dark placeholder:text-gray/50 focus:outline-none focus:border-primary transition-colors"
               />
@@ -78,7 +110,7 @@ export default function ProductosPage() {
 
           <div className="flex flex-wrap justify-center gap-2 mb-10">
             <button
-              onClick={() => setSelectedCategory(null)}
+              onClick={() => handleCategory(null)}
               className={`font-body text-sm font-medium px-4 py-2 rounded-full transition-colors ${
                 !selectedCategory ? "bg-primary text-white" : "bg-white text-dark/70 hover:bg-pastel"
               }`}
@@ -88,7 +120,7 @@ export default function ProductosPage() {
             {categories.map((cat) => (
               <button
                 key={cat.id}
-                onClick={() => setSelectedCategory(cat.slug)}
+                onClick={() => handleCategory(cat.slug)}
                 className={`font-body text-sm font-medium px-4 py-2 rounded-full transition-colors flex items-center gap-1.5 ${
                   selectedCategory === cat.slug ? "bg-primary text-white" : "bg-white text-dark/70 hover:bg-pastel"
                 }`}
