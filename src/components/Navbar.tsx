@@ -22,17 +22,15 @@ export default function Navbar() {
           Crokangol
         </Link>
 
-        <div className="flex items-center gap-1">
-          <button
-            className="lg:hidden flex flex-col gap-1 p-2"
-            onClick={() => setMenuOpen(!menuOpen)}
-            aria-label="Menú"
-          >
-            <span className={`block w-6 h-0.5 bg-dark transition-transform ${menuOpen ? "rotate-45 translate-y-1.5" : ""}`} />
-            <span className={`block w-6 h-0.5 bg-dark transition-opacity ${menuOpen ? "opacity-0" : ""}`} />
-            <span className={`block w-6 h-0.5 bg-dark transition-transform ${menuOpen ? "-rotate-45 -translate-y-1.5" : ""}`} />
-          </button>
-        </div>
+        <button
+          className="lg:hidden flex flex-col gap-1 p-2"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Menú"
+        >
+          <span className={`block w-6 h-0.5 bg-dark transition-transform ${menuOpen ? "rotate-45 translate-y-1.5" : ""}`} />
+          <span className={`block w-6 h-0.5 bg-dark transition-opacity ${menuOpen ? "opacity-0" : ""}`} />
+          <span className={`block w-6 h-0.5 bg-dark transition-transform ${menuOpen ? "-rotate-45 -translate-y-1.5" : ""}`} />
+        </button>
 
         <div className={`${menuOpen ? "flex" : "hidden"} lg:flex absolute lg:static top-16 left-0 right-0 bg-cream lg:bg-transparent flex-col lg:flex-row items-start lg:items-center gap-1 lg:pb-0 pb-4 pt-2 lg:pt-0 shadow-lg lg:shadow-none`}>
           {links.map((link) => (
@@ -78,18 +76,18 @@ export default function Navbar() {
               <ChevronDown className={`w-3 h-3 mt-0.5 transition-transform ${mobileProductsOpen ? "rotate-180" : ""}`} strokeWidth={2} />
             </button>
             {mobileProductsOpen && (
-              <div className="pl-6 flex flex-col gap-1 mt-1">
+              <div className="ml-4 pl-3 border-l-2 border-pastel flex flex-col gap-1 mt-1">
                 <Link
                   href="/#productos"
                   onClick={() => setMenuOpen(false)}
-                  className="font-body text-sm text-dark/50 hover:text-primary font-medium px-4 py-1.5 rounded-full hover:bg-pastel transition-colors"
+                  className="font-body text-sm text-dark/50 hover:text-primary font-medium px-4 py-2 rounded-full hover:bg-pastel transition-colors"
                 >
                   Destacados
                 </Link>
                 <Link
                   href="/productos"
                   onClick={() => setMenuOpen(false)}
-                  className="font-body text-sm text-dark/50 hover:text-primary font-medium px-4 py-1.5 rounded-full hover:bg-pastel transition-colors"
+                  className="font-body text-sm text-dark/50 hover:text-primary font-medium px-4 py-2 rounded-full hover:bg-pastel transition-colors"
                 >
                   Todos
                 </Link>
