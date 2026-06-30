@@ -1,10 +1,12 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useRef, useEffect, useState } from "react"
 import { getCatalogCategories } from "@/backend/features/catalog/CatalogActions"
 import type { CatalogCategory } from "@/lib/types"
 import FloatingCandies from "./FloatingCandies"
 import { CategorySkeleton, ErrorDisplay } from "./Skeleton"
+import { ChevronLeft, ChevronRight } from "lucide-react"
+import Link from "next/link"
 
 const candies = [
   { emoji: "🍬", position: { top: "8%", left: "5%" }, animation: "float" as const, size: "text-2xl" },
@@ -21,6 +23,7 @@ export default function Categories() {
   const [categories, setCategories] = useState<CatalogCategory[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(false)
+  const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     getCatalogCategories()
@@ -28,6 +31,13 @@ export default function Categories() {
       .catch(() => setError(true))
       .finally(() => setIsLoading(false))
   }, [])
+
+  const scroll = (dir: "left" | "right") => {
+    if (!scrollRef.current) return
+    const card = scrollRef.current.querySelector<HTMLElement>("[data-card]")
+    const step = card ? card.offsetWidth + 24 : 200
+    scrollRef.current.scrollBy({ left: dir === "left" ? -step : step, behavior: "smooth" })
+  }
 
   return (
     <section id="categorias" className="relative py-20 bg-cream overflow-hidden">
@@ -44,22 +54,42 @@ export default function Categories() {
         {error ? (
           <ErrorDisplay />
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            {isLoading
-              ? Array.from({ length: 6 }).map((_, i) => <CategorySkeleton key={i} />)
-              : categories.map((cat, i) => (
-            <a
-              key={cat.id}
-              href={`#${cat.id}`}
-              className={`${cat.bgColor} rounded-2xl p-6 flex flex-col items-center text-center hover:-translate-y-1.5 hover:shadow-lg transition-all cursor-pointer animate-fade-up`}
-              style={{ animationDelay: `${i * 0.1}s` }}
+          <div className="relative">
+            <button
+              onClick={() => scroll("left")}
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-dark hover:text-primary hover:scale-110 transition-all hidden sm:flex"
+              aria-label="Anterior"
             >
-              <span className="text-4xl mb-3">{cat.icon}</span>
-              <h3 className="font-display text-dark text-lg font-semibold">{cat.name}</h3>
-              <p className="font-body text-gray text-xs mt-1">{cat.description}</p>
-            </a>
-          ))}
-        </div>
+              <ChevronLeft className="w-5 h-5" strokeWidth={2.5} />
+            </button>
+            <button
+              onClick={() => scroll("right")}
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 bg-white rounded-full shadow-md flex items-center justify-center text-dark hover:text-primary hover:scale-110 transition-all hidden sm:flex"
+              aria-label="Siguiente"
+            >
+              <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
+            </button>
+            <div ref={scrollRef} className="w-[90%] mx-auto flex gap-4 overflow-x-auto pb-4 scrollbar-hide justify-center">
+              {isLoading
+                ? Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="snap-start shrink-0 w-[140px] sm:w-[180px]">
+                      <CategorySkeleton />
+                    </div>
+                  ))
+                : categories.map((cat) => (
+                    <Link
+                      key={cat.id}
+                      href={`/productos?category=${cat.slug}`}
+                      data-card
+                      className={`${cat.bgColor} snap-start shrink-0 w-[140px] sm:w-[180px] rounded-2xl p-5 flex flex-col items-center text-center hover:-translate-y-1.5 hover:shadow-lg transition-all cursor-pointer`}
+                    >
+                      <span className="text-4xl mb-3">{cat.icon}</span>
+                      <h3 className="font-display text-dark text-sm sm:text-base font-semibold">{cat.name}</h3>
+                      <p className="font-body text-gray text-xs mt-1 leading-tight">{cat.description}</p>
+                    </Link>
+                  ))}
+            </div>
+          </div>
         )}
       </div>
     </section>

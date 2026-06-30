@@ -10,7 +10,7 @@ interface ProductCardProps {
 export default function ProductCard({ product, onAdd, className = "" }: ProductCardProps) {
   return (
     <div
-      className={`bg-white rounded-2xl overflow-hidden hover:-translate-y-1.5 transition-transform shadow-sm ${className}`}
+      className={`bg-white rounded-2xl overflow-hidden hover:-translate-y-1.5 transition-transform shadow-sm flex flex-col h-full ${className}`}
     >
       <div className="relative">
         <Image
@@ -34,9 +34,9 @@ export default function ProductCard({ product, onAdd, className = "" }: ProductC
           </span>
         )}
       </div>
-      <div className="p-4">
+      <div className="p-4 flex flex-col flex-1">
         <h3 className="font-display text-dark text-base font-semibold mb-1">{product.name}</h3>
-        <p className="font-body text-primary font-bold text-lg mb-3">{product.priceFormatted}</p>
+        <p className="font-body text-primary font-bold text-lg mt-auto mb-3">{product.priceFormatted}</p>
         <button
           onClick={() => onAdd(product)}
           className="block w-full bg-primary text-white text-center font-semibold py-2.5 rounded-full text-sm hover:scale-105 transition-transform cursor-pointer"
