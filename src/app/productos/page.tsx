@@ -8,7 +8,7 @@ import { mapStoreProductToCatalog, mapCategoryToCatalog } from "@/lib/mappers"
 import type { CatalogProduct, CatalogCategory } from "@/lib/types"
 import { useCart } from "@/context/CartContext"
 import FloatingCandies from "@/components/FloatingCandies"
-import Image from "next/image"
+import ProductCard from "@/components/ProductCard"
 
 const candies = [
   { emoji: "🍬", position: { top: "4%", left: "3%" }, animation: "float" as const, size: "text-2xl" },
@@ -102,43 +102,11 @@ export default function ProductosPage() {
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
               {filtered.map((product) => (
-                <div
+                <ProductCard
                   key={product.id}
-                  className="bg-white rounded-2xl overflow-hidden hover:-translate-y-1.5 transition-transform shadow-sm"
-                >
-                  <div className="relative">
-                    <Image
-                      src={product.image ?? "/placeholder-product.svg"}
-                      alt={product.name}
-                      width={300}
-                      height={300}
-                      className="w-full aspect-square object-cover"
-                    />
-                    {product.badge && (
-                      <span
-                        className={`absolute top-3 left-3 text-xs font-semibold px-3 py-1 rounded-full ${
-                          product.badge === "Más vendido"
-                            ? "bg-secondary text-dark"
-                            : product.badge === "Nuevo"
-                              ? "bg-primary text-white"
-                              : "bg-green-500 text-white"
-                        }`}
-                      >
-                        {product.badge}
-                      </span>
-                    )}
-                  </div>
-                  <div className="p-4">
-                    <h3 className="font-display text-dark text-base font-semibold mb-1">{product.name}</h3>
-                    <p className="font-body text-primary font-bold text-lg mb-3">{product.priceFormatted}</p>
-                    <button
-                      onClick={() => handleAdd(product)}
-                      className="block w-full bg-primary text-white text-center font-semibold py-2.5 rounded-full text-sm hover:scale-105 transition-transform cursor-pointer"
-                    >
-                      Agregar
-                    </button>
-                  </div>
-                </div>
+                  product={product}
+                  onAdd={handleAdd}
+                />
               ))}
             </div>
           )}

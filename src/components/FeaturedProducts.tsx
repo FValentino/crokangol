@@ -5,8 +5,8 @@ import { getCatalogProducts } from "@/backend/features/catalog/CatalogActions"
 import { addToCart } from "@/backend/features/cart/CartActions"
 import { mapStoreProductToCatalog } from "@/lib/mappers"
 import type { CatalogProduct } from "@/lib/types"
-import Image from "next/image"
 import FloatingCandies from "./FloatingCandies"
+import ProductCard from "./ProductCard"
 import { useCart } from "@/context/CartContext"
 
 const candies = [
@@ -76,47 +76,14 @@ export default function FeaturedProducts() {
           </button>
           <div ref={scrollRef} className="w-[90%] mx-auto flex gap-6 overflow-x-auto snap-x snap-mandatory pb-4 scrollbar-hide">
             {products.map((product) => (
-            <div
-              key={product.id}
-              data-card
-              className="snap-start shrink-0 w-[200px] sm:w-[240px] bg-cream rounded-2xl overflow-hidden hover:-translate-y-1.5 hover:shadow-lg transition-all shadow-sm"
-            >
-              <div className="relative">
-                <Image
-                  src={product.image ?? "/placeholder-product.svg"}
-                  alt={product.name}
-                  width={300}
-                  height={300}
-                  className="w-full aspect-square object-cover"
+              <div key={product.id} data-card className="snap-start shrink-0 w-[200px] sm:w-[240px]">
+                <ProductCard
+                  product={product}
+                  onAdd={handleAdd}
+                  className="bg-cream hover:shadow-lg"
                 />
-                {product.badge && (
-                  <span
-                    className={`absolute top-3 left-3 text-xs font-semibold px-3 py-1 rounded-full ${
-                      product.badge === "Más vendido"
-                        ? "bg-secondary text-dark"
-                        : product.badge === "Nuevo"
-                          ? "bg-primary text-white"
-                          : "bg-green-500 text-white"
-                    }`}
-                  >
-                    {product.badge}
-                  </span>
-                )}
               </div>
-              <div className="p-4">
-                <h3 className="font-display text-dark text-base font-semibold mb-1">
-                  {product.name}
-                </h3>
-                <p className="font-body text-primary font-bold text-lg mb-3">{product.priceFormatted}</p>
-                <button
-                  onClick={() => handleAdd(product)}
-                  className="block w-full bg-primary text-white text-center font-semibold py-2.5 rounded-full text-sm hover:scale-105 transition-transform cursor-pointer"
-                >
-                  Agregar
-                </button>
-              </div>
-            </div>
-          ))}
+            ))}
         </div>
         </div>
         <div className="text-center mt-10">
