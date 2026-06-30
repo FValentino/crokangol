@@ -1,4 +1,5 @@
 import FloatingCandies from "./FloatingCandies"
+import { WHATSAPP_URL } from "@/lib/constants"
 
 const candies = [
   { emoji: "🍬", position: { top: "5%", left: "4%" }, animation: "float" as const, size: "text-2xl" },
@@ -41,7 +42,7 @@ export default function Footer() {
               <li className="flex items-center gap-2">
                 <span>📱</span>
                 <a
-                  href="https://wa.me/5493624006615"
+                  href={WHATSAPP_URL}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-primary/80 hover:text-white transition-colors"
@@ -71,7 +72,7 @@ export default function Footer() {
                 <span className="text-lg">📷</span>
               </a>
               <a
-                href="https://wa.me/5493624006615"
+                href={WHATSAPP_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center hover:bg-primary transition-colors"

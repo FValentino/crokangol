@@ -1,4 +1,5 @@
 import { CandyMascotLeft, CandyMascotRight, LollipopSVG } from "./CandyMascot"
+import { WHATSAPP_URL } from "@/lib/constants"
 
 const floatingCandies = [
   { emoji: "🍫", x: "10%", delay: "0s", size: "text-2xl" },
@@ -47,7 +48,7 @@ export default function Hero() {
               Ver Productos
             </a>
             <a
-              href="https://wa.me/5493624006615"
+              href={WHATSAPP_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="bg-white text-dark font-semibold px-8 py-3.5 rounded-full text-center border-2 border-gray/20 hover:scale-105 transition-transform"

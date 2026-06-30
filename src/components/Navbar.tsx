@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import { WHATSAPP_URL } from "@/lib/constants"
 
 const links = [
   { label: "Inicio", href: "/#inicio" },
@@ -100,7 +101,7 @@ export default function Navbar() {
           </div>
 
           <a
-            href="https://wa.me/5493624006615"
+            href={WHATSAPP_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="font-body text-sm bg-primary text-white font-semibold px-5 py-2 rounded-full hover:scale-105 transition-transform ml-0 lg:ml-2 mt-2 lg:mt-0"

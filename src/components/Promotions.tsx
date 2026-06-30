@@ -1,3 +1,5 @@
+import { WHATSAPP_URL } from "@/lib/constants"
+
 export default function Promotions() {
   return (
     <section className="relative py-20 bg-primary overflow-hidden">
@@ -21,7 +23,7 @@ export default function Promotions() {
           Consultá por promociones combinadas.
         </p>
         <a
-          href="https://wa.me/5493624006615"
+          href={WHATSAPP_URL}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-block bg-white text-primary font-semibold px-10 py-3.5 rounded-full hover:scale-105 transition-transform shadow-lg"
