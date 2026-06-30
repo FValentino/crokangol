@@ -7,6 +7,7 @@ import { mapStoreProductToCatalog } from "@/lib/mappers"
 import type { CatalogProduct } from "@/lib/types"
 import FloatingCandies from "./FloatingCandies"
 import ProductCard from "./ProductCard"
+import { ProductCardSkeleton } from "./Skeleton"
 import { useCart } from "@/context/CartContext"
 
 const candies = [
@@ -23,12 +24,15 @@ const candies = [
 export default function FeaturedProducts() {
   const { addItem } = useCart()
   const [products, setProducts] = useState<CatalogProduct[]>([])
+  const [isLoading, setIsLoading] = useState(true)
   const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    getCatalogProducts().then((storeProducts) => {
-      setProducts(storeProducts.map(mapStoreProductToCatalog))
-    })
+    getCatalogProducts()
+      .then((storeProducts) => {
+        setProducts(storeProducts.map(mapStoreProductToCatalog))
+      })
+      .finally(() => setIsLoading(false))
   }, [])
 
   const scroll = (dir: "left" | "right") => {
@@ -75,15 +79,21 @@ export default function FeaturedProducts() {
             </svg>
           </button>
           <div ref={scrollRef} className="w-[90%] mx-auto flex gap-6 overflow-x-auto snap-x snap-mandatory pb-4 scrollbar-hide">
-            {products.map((product) => (
-              <div key={product.id} data-card className="snap-start shrink-0 w-[200px] sm:w-[240px]">
-                <ProductCard
-                  product={product}
-                  onAdd={handleAdd}
-                  className="bg-cream hover:shadow-lg"
-                />
-              </div>
-            ))}
+            {isLoading
+              ? Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="snap-start shrink-0 w-[200px] sm:w-[240px]">
+                    <ProductCardSkeleton />
+                  </div>
+                ))
+              : products.map((product) => (
+                  <div key={product.id} data-card className="snap-start shrink-0 w-[200px] sm:w-[240px]">
+                    <ProductCard
+                      product={product}
+                      onAdd={handleAdd}
+                      className="bg-cream hover:shadow-lg"
+                    />
+                  </div>
+                ))}
         </div>
         </div>
         <div className="text-center mt-10">

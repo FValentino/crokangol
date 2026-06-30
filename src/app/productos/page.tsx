@@ -9,6 +9,7 @@ import type { CatalogProduct, CatalogCategory } from "@/lib/types"
 import { useCart } from "@/context/CartContext"
 import FloatingCandies from "@/components/FloatingCandies"
 import ProductCard from "@/components/ProductCard"
+import { ProductCardSkeleton } from "@/components/Skeleton"
 
 const candies = [
   { emoji: "🍬", position: { top: "4%", left: "3%" }, animation: "float" as const, size: "text-2xl" },
@@ -23,15 +24,18 @@ export default function ProductosPage() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [products, setProducts] = useState<CatalogProduct[]>([])
   const [categories, setCategories] = useState<CatalogCategory[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     Promise.all([
       getCatalogProducts().then((sp) => sp.map(mapStoreProductToCatalog)),
       getCatalogCategories().then((cats) => cats.map(mapCategoryToCatalog)),
-    ]).then(([prods, cats]) => {
-      setProducts(prods)
-      setCategories(cats)
-    })
+    ])
+      .then(([prods, cats]) => {
+        setProducts(prods)
+        setCategories(cats)
+      })
+      .finally(() => setIsLoading(false))
   }, [])
 
   const filtered = useMemo(() => {
@@ -93,7 +97,13 @@ export default function ProductosPage() {
             ))}
           </div>
 
-          {filtered.length === 0 ? (
+          {isLoading ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <ProductCardSkeleton key={i} />
+              ))}
+            </div>
+          ) : filtered.length === 0 ? (
             <div className="text-center py-16">
               <span className="text-5xl block mb-4">🔍</span>
               <p className="font-display text-lg text-dark">No encontramos productos con ese nombre</p>
