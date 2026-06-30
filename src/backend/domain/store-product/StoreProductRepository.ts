@@ -1,6 +1,11 @@
-import { Repository } from "typeorm"
+import { Repository, ILike } from "typeorm"
 import { StoreProduct } from "./StoreProduct.entity"
 import { getDataSource } from "@/backend/lib/database"
+
+export interface StoreProductFilters {
+  categoryId?: string
+  search?: string
+}
 
 export class StoreProductRepository {
   private repo: Repository<StoreProduct>
@@ -15,6 +20,24 @@ export class StoreProductRepository {
       this.repo = ds.getRepository(StoreProduct)
     }
     return this.repo
+  }
+
+  async findByStoreWithFilters(storeId: string, filters?: StoreProductFilters): Promise<StoreProduct[]> {
+    const repo = await this.getRepo()
+    const where: Record<string, unknown> = { store: { id: storeId }, active: true }
+
+    if (filters?.categoryId) {
+      where.category = { id: filters.categoryId }
+    }
+    if (filters?.search) {
+      where.product = { name: ILike(`%${filters.search}%`) }
+    }
+
+    return repo.find({
+      where,
+      relations: { product: true, category: true },
+      order: { product: { name: "ASC" } },
+    })
   }
 
   async findByStore(storeId: string): Promise<StoreProduct[]> {

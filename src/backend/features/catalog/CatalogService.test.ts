@@ -5,6 +5,7 @@ import { CategoryRepository } from "@/backend/domain/category/CategoryRepository
 
 function createMockStoreProductRepo() {
   return {
+    findByStoreWithFilters: vi.fn(),
     findByStore: vi.fn(),
     findByStoreAndCategory: vi.fn(),
     findByStoreAndSlug: vi.fn(),
@@ -77,35 +78,35 @@ describe("CatalogService", () => {
         mockStoreProduct(),
         mockStoreProduct({ id: "sp-2", product: mockProduct({ id: "2", name: "Caramelo" }) }),
       ]
-      storeProductRepo.findByStore.mockResolvedValue(products)
+      storeProductRepo.findByStoreWithFilters.mockResolvedValue(products)
 
       const result = await service.listProducts("store-1")
 
       expect(result).toHaveLength(2)
-      expect(storeProductRepo.findByStore).toHaveBeenCalledWith("store-1")
+      expect(storeProductRepo.findByStoreWithFilters).toHaveBeenCalledWith("store-1", undefined)
     })
 
     it("should filter products by category", async () => {
       const products = [mockStoreProduct()]
-      storeProductRepo.findByStoreAndCategory.mockResolvedValue(products)
+      storeProductRepo.findByStoreWithFilters.mockResolvedValue(products)
 
       const result = await service.listProducts("store-1", { categoryId: "cat-1" })
 
       expect(result).toHaveLength(1)
-      expect(storeProductRepo.findByStoreAndCategory).toHaveBeenCalledWith("store-1", "cat-1")
+      expect(storeProductRepo.findByStoreWithFilters).toHaveBeenCalledWith("store-1", { categoryId: "cat-1" })
     })
 
     it("should filter products by search term", async () => {
       const products = [
         mockStoreProduct({ product: mockProduct({ name: "Chocolate Blanco" }) }),
-        mockStoreProduct({ product: mockProduct({ id: "2", name: "Caramelo" }) }),
       ]
-      storeProductRepo.findByStore.mockResolvedValue(products)
+      storeProductRepo.findByStoreWithFilters.mockResolvedValue(products)
 
       const result = await service.listProducts("store-1", { search: "chocolate" })
 
       expect(result).toHaveLength(1)
       expect(result[0].product.name).toBe("Chocolate Blanco")
+      expect(storeProductRepo.findByStoreWithFilters).toHaveBeenCalledWith("store-1", { search: "chocolate" })
     })
   })
 

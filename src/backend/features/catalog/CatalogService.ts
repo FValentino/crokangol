@@ -1,4 +1,4 @@
-import { StoreProductRepository } from "@/backend/domain/store-product/StoreProductRepository"
+import { StoreProductRepository, StoreProductFilters } from "@/backend/domain/store-product/StoreProductRepository"
 import { CategoryRepository } from "@/backend/domain/category/CategoryRepository"
 
 export interface CatalogFilters {
@@ -19,18 +19,7 @@ export class CatalogService {
   }
 
   async listProducts(storeId: string, filters?: CatalogFilters) {
-    if (filters?.categoryId) {
-      return this.storeProductRepo.findByStoreAndCategory(storeId, filters.categoryId)
-    }
-
-    const products = await this.storeProductRepo.findByStore(storeId)
-
-    if (filters?.search) {
-      const q = filters.search.toLowerCase()
-      return products.filter((sp) => sp.product.name.toLowerCase().includes(q))
-    }
-
-    return products
+    return this.storeProductRepo.findByStoreWithFilters(storeId, filters as StoreProductFilters)
   }
 
   async getProductBySlug(storeId: string, slug: string) {
