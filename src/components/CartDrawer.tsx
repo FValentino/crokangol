@@ -27,7 +27,7 @@ export default function CartDrawer() {
         phone: form.phone,
         email: form.email || undefined,
       })
-      window.open(url, "_blank")
+      window.location.href = url
       setShowForm(false)
       setOpen(false)
     } catch {
