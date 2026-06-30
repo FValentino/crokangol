@@ -5,8 +5,9 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  ManyToOne,
+  JoinColumn,
 } from "typeorm"
-import { ProductPhoto } from "@/backend/domain/product/ProductPhoto.entity"
 
 @Entity("products")
 export class Product {
@@ -42,6 +43,34 @@ export class Product {
 
   @Column({ type: "boolean", default: true })
   active!: boolean
+
+  @CreateDateColumn()
+  createdAt!: Date
+
+  @UpdateDateColumn()
+  updatedAt!: Date
+}
+
+@Entity("product_photos")
+export class ProductPhoto {
+  @PrimaryGeneratedColumn("uuid")
+  id!: string
+
+  @Column({ type: "uuid", name: "store_id" })
+  storeId!: string
+
+  @ManyToOne(() => Product, (product) => product.photos)
+  @JoinColumn({ name: "product_id" })
+  product!: Product
+
+  @Column({ type: "varchar", length: 500 })
+  url!: string
+
+  @Column({ type: "boolean", default: false, name: "is_primary" })
+  isPrimary!: boolean
+
+  @Column({ type: "int", default: 0, name: "sort_order" })
+  sortOrder!: number
 
   @CreateDateColumn()
   createdAt!: Date
