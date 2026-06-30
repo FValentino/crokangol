@@ -1,33 +1,27 @@
 import { CandyMascotLeft, CandyMascotRight, LollipopSVG } from "./CandyMascot"
 import { WHATSAPP_URL } from "@/lib/constants"
+import FloatingCandies from "./FloatingCandies"
+import type { CandyConfig } from "./FloatingCandies"
 
-const floatingCandies = [
-  { emoji: "🍫", x: "10%", delay: "0s", size: "text-2xl" },
-  { emoji: "🍬", x: "85%", delay: "1s", size: "text-xl" },
-  { emoji: "🍭", x: "5%", delay: "2s", size: "text-3xl" },
-  { emoji: "🍩", x: "75%", delay: "0.5s", size: "text-2xl" },
-  { emoji: "🍪", x: "90%", delay: "3s", size: "text-xl" },
-  { emoji: "🥤", x: "15%", delay: "1.5s", size: "text-2xl" },
-  { emoji: "🍿", x: "45%", delay: "0.8s", size: "text-lg" },
-  { emoji: "🧁", x: "55%", delay: "2.5s", size: "text-2xl" },
-  { emoji: "🍡", x: "30%", delay: "1.2s", size: "text-xl" },
-  { emoji: "🎂", x: "65%", delay: "3.5s", size: "text-lg" },
-  { emoji: "🍦", x: "20%", delay: "0.3s", size: "text-2xl" },
-  { emoji: "🍿", x: "70%", delay: "1.8s", size: "text-xl" },
+const floatingCandies: CandyConfig[] = [
+  { emoji: "🍫", position: { top: "15%", left: "10%" }, animation: "float", size: "text-2xl" },
+  { emoji: "🍬", position: { top: "25%", right: "15%" }, animation: "float-delayed", size: "text-xl" },
+  { emoji: "🍭", position: { top: "35%", left: "5%" }, animation: "float-slow", size: "text-3xl" },
+  { emoji: "🍩", position: { top: "45%", right: "25%" }, animation: "float-delayed", size: "text-2xl" },
+  { emoji: "🍪", position: { top: "55%", right: "10%" }, animation: "float-slow", size: "text-xl" },
+  { emoji: "🥤", position: { top: "65%", left: "15%" }, animation: "float", size: "text-2xl" },
+  { emoji: "🍿", position: { top: "75%", left: "45%" }, animation: "float", size: "text-lg" },
+  { emoji: "🧁", position: { top: "85%", right: "45%" }, animation: "float-delayed", size: "text-2xl" },
+  { emoji: "🍡", position: { top: "95%", left: "30%" }, animation: "float-slow", size: "text-xl" },
+  { emoji: "🎂", position: { top: "105%", right: "35%" }, animation: "float", size: "text-lg" },
+  { emoji: "🍦", position: { top: "115%", left: "20%" }, animation: "float-slow", size: "text-2xl" },
+  { emoji: "🍿", position: { top: "125%", right: "30%" }, animation: "float-delayed", size: "text-xl" },
 ]
 
 export default function Hero() {
   return (
     <section id="inicio" className="relative h-dvh pt-16 flex items-center justify-center overflow-hidden bg-gradient-to-b from-cream to-pastel">
-      {floatingCandies.map((candy, i) => (
-        <span
-          key={i}
-          className={`absolute animate-float ${candy.size} opacity-60`}
-          style={{ left: candy.x, top: `${15 + i * 10}%`, animationDelay: candy.delay }}
-        >
-          {candy.emoji}
-        </span>
-      ))}
+      <FloatingCandies candies={floatingCandies} />
       <div className="relative z-10 container mx-auto px-4 py-12 md:py-24 flex flex-col lg:flex-row items-center gap-8 lg:gap-16">
         <div className="flex-1 text-center lg:text-left">
           <span className="inline-block bg-secondary text-dark text-sm font-semibold px-4 py-1.5 rounded-full mb-6 animate-fade-up">
