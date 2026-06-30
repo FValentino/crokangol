@@ -75,6 +75,7 @@ export class CheckoutService {
 
     cart.status = "checked_out"
     await this.cartRepo.save(cart)
+    await this.cartRepo.clearItems(cart.id)
 
     const clientName =
       client.firstName && client.lastName
