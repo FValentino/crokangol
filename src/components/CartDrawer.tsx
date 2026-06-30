@@ -65,64 +65,94 @@ export default function CartDrawer() {
           </div>
         ) : showForm ? (
           <div className="flex-1 overflow-y-auto px-6 py-6">
-            <h3 className="font-display text-lg text-dark mb-4">Tus datos</h3>
-            <form onSubmit={handleCheckout} className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
+            {/* Order summary */}
+            <div className="bg-white rounded-xl p-4 mb-6 shadow-sm">
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-display text-sm text-dark font-semibold">Resumen del pedido</span>
+                <span className="font-body text-xs text-gray">{items.length} {items.length === 1 ? "producto" : "productos"}</span>
+              </div>
+              <div className="space-y-2">
+                {items.slice(0, 3).map((item) => (
+                  <div key={item.id} className="flex items-center justify-between text-sm">
+                    <span className="font-body text-dark/70 truncate mr-2">
+                      {item.name} <span className="text-gray">x{item.quantity}</span>
+                    </span>
+                    <span className="font-body text-dark font-medium shrink-0">{item.price}</span>
+                  </div>
+                ))}
+                {items.length > 3 && (
+                  <p className="font-body text-xs text-gray text-center pt-1">
+                    +{items.length - 3} {items.length - 3 === 1 ? "producto más" : "productos más"}
+                  </p>
+                )}
+              </div>
+              <div className="border-t border-pastel mt-3 pt-3 flex items-center justify-between">
+                <span className="font-display text-sm text-dark font-semibold">Total</span>
+                <span className="font-display text-primary font-bold">{formatPrice(totalPrice)}</span>
+              </div>
+            </div>
+
+            {/* Checkout form */}
+            <div className="bg-white rounded-xl p-4 shadow-sm">
+              <h3 className="font-display text-base text-dark mb-4">Tus datos</h3>
+              <form onSubmit={handleCheckout} className="space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="font-body text-xs text-dark/70 mb-1 block">Nombre *</label>
+                    <input
+                      value={form.firstName}
+                      onChange={(e) => setForm({ ...form, firstName: e.target.value })}
+                      className="w-full px-3 py-2.5 rounded-xl border border-pastel bg-cream font-body text-sm focus:outline-none focus:border-primary"
+                      placeholder="Juan"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-body text-xs text-dark/70 mb-1 block">Apellido *</label>
+                    <input
+                      value={form.lastName}
+                      onChange={(e) => setForm({ ...form, lastName: e.target.value })}
+                      className="w-full px-3 py-2.5 rounded-xl border border-pastel bg-cream font-body text-sm focus:outline-none focus:border-primary"
+                      placeholder="Perez"
+                    />
+                  </div>
+                </div>
                 <div>
-                  <label className="font-body text-sm text-dark/70 mb-1 block">Nombre *</label>
+                  <label className="font-body text-xs text-dark/70 mb-1 block">Teléfono *</label>
                   <input
-                    value={form.firstName}
-                    onChange={(e) => setForm({ ...form, firstName: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-xl border border-pastel bg-white font-body text-sm focus:outline-none focus:border-primary"
-                    placeholder="Juan"
+                    value={form.phone}
+                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                    className="w-full px-3 py-2.5 rounded-xl border border-pastel bg-cream font-body text-sm focus:outline-none focus:border-primary"
+                    placeholder="3512345678"
                   />
                 </div>
                 <div>
-                  <label className="font-body text-sm text-dark/70 mb-1 block">Apellido *</label>
+                  <label className="font-body text-xs text-dark/70 mb-1 block">Email</label>
                   <input
-                    value={form.lastName}
-                    onChange={(e) => setForm({ ...form, lastName: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-xl border border-pastel bg-white font-body text-sm focus:outline-none focus:border-primary"
-                    placeholder="Perez"
+                    value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    className="w-full px-3 py-2.5 rounded-xl border border-pastel bg-cream font-body text-sm focus:outline-none focus:border-primary"
+                    placeholder="juan@ejemplo.com"
                   />
                 </div>
-              </div>
-              <div>
-                <label className="font-body text-sm text-dark/70 mb-1 block">Teléfono *</label>
-                <input
-                  value={form.phone}
-                  onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                  className="w-full px-3 py-2.5 rounded-xl border border-pastel bg-white font-body text-sm focus:outline-none focus:border-primary"
-                  placeholder="3512345678"
-                />
-              </div>
-              <div>
-                <label className="font-body text-sm text-dark/70 mb-1 block">Email</label>
-                <input
-                  value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className="w-full px-3 py-2.5 rounded-xl border border-pastel bg-white font-body text-sm focus:outline-none focus:border-primary"
-                  placeholder="juan@ejemplo.com"
-                />
-              </div>
-              {error && <p className="font-body text-sm text-red-500">{error}</p>}
-              <div className="flex gap-3 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowForm(false)}
-                  className="flex-1 font-body text-sm text-dark/70 bg-white border border-pastel py-3 rounded-full font-semibold hover:bg-pastel transition-colors cursor-pointer"
-                >
-                  Volver
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="flex-1 bg-primary text-white font-semibold py-3 rounded-full hover:scale-105 transition-transform disabled:opacity-50 cursor-pointer"
-                >
-                  {loading ? "Procesando..." : "Confirmar Pedido"}
-                </button>
-              </div>
-            </form>
+                {error && <p className="font-body text-sm text-red-500">{error}</p>}
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setShowForm(false)}
+                    className="flex-1 font-body text-sm text-dark/70 bg-white border border-pastel py-3 rounded-full font-semibold hover:bg-pastel transition-colors cursor-pointer"
+                  >
+                    Volver
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="flex-1 bg-primary text-white font-semibold py-3 rounded-full hover:scale-105 transition-transform disabled:opacity-50 cursor-pointer"
+                  >
+                    {loading ? "Procesando..." : "Confirmar Pedido"}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
         ) : (
           <>
