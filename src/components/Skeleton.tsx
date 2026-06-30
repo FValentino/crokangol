@@ -24,6 +24,16 @@ export function ProductCardSkeleton() {
   )
 }
 
+export function ErrorDisplay({ message = "Error al cargar los datos. Intentá de nuevo más tarde." }: { message?: string }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-16 text-center">
+      <span className="text-4xl mb-4">😅</span>
+      <p className="font-display text-lg text-dark mb-1">Algo salió mal</p>
+      <p className="font-body text-sm text-gray max-w-md">{message}</p>
+    </div>
+  )
+}
+
 export function CategorySkeleton() {
   return (
     <div className="rounded-2xl p-6 flex flex-col items-center gap-3 bg-pastel/30">

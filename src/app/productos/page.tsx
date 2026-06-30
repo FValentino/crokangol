@@ -9,7 +9,7 @@ import type { CatalogProduct, CatalogCategory } from "@/lib/types"
 import { useCart } from "@/context/CartContext"
 import FloatingCandies from "@/components/FloatingCandies"
 import ProductCard from "@/components/ProductCard"
-import { ProductCardSkeleton } from "@/components/Skeleton"
+import { ProductCardSkeleton, ErrorDisplay } from "@/components/Skeleton"
 
 const candies = [
   { emoji: "🍬", position: { top: "4%", left: "3%" }, animation: "float" as const, size: "text-2xl" },
@@ -25,6 +25,7 @@ export default function ProductosPage() {
   const [products, setProducts] = useState<CatalogProduct[]>([])
   const [categories, setCategories] = useState<CatalogCategory[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(false)
 
   useEffect(() => {
     Promise.all([
@@ -35,6 +36,7 @@ export default function ProductosPage() {
         setProducts(prods)
         setCategories(cats)
       })
+      .catch(() => setError(true))
       .finally(() => setIsLoading(false))
   }, [])
 
@@ -97,7 +99,9 @@ export default function ProductosPage() {
             ))}
           </div>
 
-          {isLoading ? (
+          {error ? (
+            <ErrorDisplay />
+          ) : isLoading ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
               {Array.from({ length: 8 }).map((_, i) => (
                 <ProductCardSkeleton key={i} />

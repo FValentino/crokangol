@@ -7,7 +7,7 @@ import { mapStoreProductToCatalog } from "@/lib/mappers"
 import type { CatalogProduct } from "@/lib/types"
 import FloatingCandies from "./FloatingCandies"
 import ProductCard from "./ProductCard"
-import { ProductCardSkeleton } from "./Skeleton"
+import { ProductCardSkeleton, ErrorDisplay } from "./Skeleton"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useCart } from "@/context/CartContext"
 
@@ -26,6 +26,7 @@ export default function FeaturedProducts() {
   const { addItem } = useCart()
   const [products, setProducts] = useState<CatalogProduct[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -33,6 +34,7 @@ export default function FeaturedProducts() {
       .then((storeProducts) => {
         setProducts(storeProducts.map(mapStoreProductToCatalog))
       })
+      .catch(() => setError(true))
       .finally(() => setIsLoading(false))
   }, [])
 
@@ -75,23 +77,27 @@ export default function FeaturedProducts() {
           >
             <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
           </button>
-          <div ref={scrollRef} className="w-[90%] mx-auto flex gap-6 overflow-x-auto snap-x snap-mandatory pb-4 scrollbar-hide">
-            {isLoading
-              ? Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="snap-start shrink-0 w-[200px] sm:w-[240px]">
-                    <ProductCardSkeleton />
-                  </div>
-                ))
-              : products.map((product) => (
-                  <div key={product.id} data-card className="snap-start shrink-0 w-[200px] sm:w-[240px]">
-                    <ProductCard
-                      product={product}
-                      onAdd={handleAdd}
-                      className="bg-cream hover:shadow-lg"
-                    />
-                  </div>
-                ))}
-        </div>
+          {error ? (
+            <ErrorDisplay />
+          ) : (
+            <div ref={scrollRef} className="w-[90%] mx-auto flex gap-6 overflow-x-auto snap-x snap-mandatory pb-4 scrollbar-hide">
+              {isLoading
+                ? Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="snap-start shrink-0 w-[200px] sm:w-[240px]">
+                      <ProductCardSkeleton />
+                    </div>
+                  ))
+                : products.map((product) => (
+                    <div key={product.id} data-card className="snap-start shrink-0 w-[200px] sm:w-[240px]">
+                      <ProductCard
+                        product={product}
+                        onAdd={handleAdd}
+                        className="bg-cream hover:shadow-lg"
+                      />
+                    </div>
+                  ))}
+            </div>
+          )}
         </div>
         <div className="text-center mt-10">
           <a

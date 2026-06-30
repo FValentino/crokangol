@@ -5,7 +5,7 @@ import { getCatalogCategories } from "@/backend/features/catalog/CatalogActions"
 import { mapCategoryToCatalog } from "@/lib/mappers"
 import type { CatalogCategory } from "@/lib/types"
 import FloatingCandies from "./FloatingCandies"
-import { CategorySkeleton } from "./Skeleton"
+import { CategorySkeleton, ErrorDisplay } from "./Skeleton"
 
 const candies = [
   { emoji: "🍬", position: { top: "8%", left: "5%" }, animation: "float" as const, size: "text-2xl" },
@@ -21,10 +21,12 @@ const candies = [
 export default function Categories() {
   const [categories, setCategories] = useState<CatalogCategory[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(false)
 
   useEffect(() => {
     getCatalogCategories()
       .then((cats) => setCategories(cats.map(mapCategoryToCatalog)))
+      .catch(() => setError(true))
       .finally(() => setIsLoading(false))
   }, [])
 
@@ -40,10 +42,13 @@ export default function Categories() {
             Todo lo que buscas para endulzar tus momentos especiales
           </p>
         </div>
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-          {isLoading
-            ? Array.from({ length: 6 }).map((_, i) => <CategorySkeleton key={i} />)
-            : categories.map((cat, i) => (
+        {error ? (
+          <ErrorDisplay />
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            {isLoading
+              ? Array.from({ length: 6 }).map((_, i) => <CategorySkeleton key={i} />)
+              : categories.map((cat, i) => (
             <a
               key={cat.id}
               href={`#${cat.id}`}
@@ -56,6 +61,7 @@ export default function Categories() {
             </a>
           ))}
         </div>
+        )}
       </div>
     </section>
   )
