@@ -1,16 +1,21 @@
 import { WHATSAPP_URL } from "@/lib/constants"
+import FloatingCandies from "./FloatingCandies"
+
+const candies = [
+  { emoji: "🍫", position: { top: "4%", left: "8%" }, animation: "float" as const, size: "text-3xl" },
+  { emoji: "🍬", position: { top: "8%", right: "12%" }, animation: "float-delayed" as const, size: "text-2xl" },
+  { emoji: "🍭", position: { bottom: "8%", left: "20%" }, animation: "float-slow" as const, size: "text-3xl" },
+  { emoji: "🍩", position: { bottom: "12%", right: "15%" }, animation: "float" as const, size: "text-2xl" },
+  { emoji: "🍪", position: { top: "16%", left: "40%" }, animation: "float-delayed" as const, size: "text-xl" },
+  { emoji: "🧁", position: { top: "20%", right: "35%" }, animation: "float-slow" as const, size: "text-2xl" },
+  { emoji: "🍿", position: { bottom: "16%", left: "55%" }, animation: "float" as const, size: "text-lg" },
+  { emoji: "🍡", position: { bottom: "20%", right: "40%" }, animation: "float-delayed" as const, size: "text-xl" },
+]
 
 export default function Promotions() {
   return (
     <section className="relative py-20 bg-primary overflow-hidden">
-      <span className="absolute top-4 left-[8%] text-3xl animate-float opacity-60">🍫</span>
-      <span className="absolute top-8 right-[12%] text-2xl animate-float-delayed opacity-60">🍬</span>
-      <span className="absolute bottom-8 left-[20%] text-3xl animate-float-slow opacity-60">🍭</span>
-      <span className="absolute bottom-12 right-[15%] text-2xl animate-float opacity-60">🍩</span>
-      <span className="absolute top-16 left-[40%] text-xl animate-float-delayed opacity-60">🍪</span>
-      <span className="absolute top-20 right-[35%] text-2xl animate-float-slow opacity-60">🧁</span>
-      <span className="absolute bottom-16 left-[55%] text-lg animate-float opacity-60">🍿</span>
-      <span className="absolute bottom-20 right-[40%] text-xl animate-float-delayed opacity-60">🍡</span>
+      <FloatingCandies candies={candies} />
       <div className="container mx-auto px-4 text-center relative z-10">
         <span className="inline-block bg-secondary text-dark text-sm font-semibold px-4 py-1.5 rounded-full mb-4">
           🎁 Ofertas especiales
