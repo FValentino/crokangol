@@ -1,6 +1,14 @@
-import { socialPosts } from "@/data/mock"
 import Image from "next/image"
 import FloatingCandies from "./FloatingCandies"
+
+const socialPosts = [
+  { id: "s1", image: "/placeholder-social.svg", likes: "234" },
+  { id: "s2", image: "/placeholder-social.svg", likes: "189" },
+  { id: "s3", image: "/placeholder-social.svg", likes: "312" },
+  { id: "s4", image: "/placeholder-social.svg", likes: "156" },
+  { id: "s5", image: "/placeholder-social.svg", likes: "278" },
+  { id: "s6", image: "/placeholder-social.svg", likes: "203" },
+]
 
 const candies = [
   { emoji: "🍬", position: { top: "5%", left: "3%" }, animation: "float-slow" as const, size: "text-2xl" },

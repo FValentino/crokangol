@@ -1,7 +1,11 @@
 "use client"
 
-import { useState, useMemo } from "react"
-import { products, categories } from "@/data/mock"
+import { useState, useMemo, useEffect } from "react"
+import { getCatalogProducts } from "@/backend/features/catalog/CatalogActions"
+import { getCatalogCategories } from "@/backend/features/catalog/CatalogActions"
+import { addToCart } from "@/backend/features/cart/CartActions"
+import { mapStoreProductToCatalog, mapCategoryToCatalog } from "@/lib/mappers"
+import type { CatalogProduct, CatalogCategory } from "@/lib/types"
 import { useCart } from "@/context/CartContext"
 import FloatingCandies from "@/components/FloatingCandies"
 import Image from "next/image"
@@ -17,14 +21,31 @@ export default function ProductosPage() {
   const { addItem } = useCart()
   const [search, setSearch] = useState("")
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [products, setProducts] = useState<CatalogProduct[]>([])
+  const [categories, setCategories] = useState<CatalogCategory[]>([])
+
+  useEffect(() => {
+    Promise.all([
+      getCatalogProducts().then((sp) => sp.map(mapStoreProductToCatalog)),
+      getCatalogCategories().then((cats) => cats.map(mapCategoryToCatalog)),
+    ]).then(([prods, cats]) => {
+      setProducts(prods)
+      setCategories(cats)
+    })
+  }, [])
 
   const filtered = useMemo(() => {
     return products.filter((p) => {
       const matchesSearch = p.name.toLowerCase().includes(search.toLowerCase())
-      const matchesCategory = !selectedCategory || p.category === selectedCategory
+      const matchesCategory = !selectedCategory || p.categorySlug === selectedCategory
       return matchesSearch && matchesCategory
     })
-  }, [search, selectedCategory])
+  }, [search, selectedCategory, products])
+
+  const handleAdd = async (p: CatalogProduct) => {
+    addItem({ id: p.id, name: p.name, price: p.priceFormatted, image: p.image ?? "/placeholder-product.svg" })
+    await addToCart(p.id, 1)
+  }
 
   return (
     <div className="min-h-screen pt-16 bg-cream">
@@ -61,9 +82,9 @@ export default function ProductosPage() {
             {categories.map((cat) => (
               <button
                 key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
+                onClick={() => setSelectedCategory(cat.slug)}
                 className={`font-body text-sm font-medium px-4 py-2 rounded-full transition-colors flex items-center gap-1.5 ${
-                  selectedCategory === cat.id ? "bg-primary text-white" : "bg-white text-dark/70 hover:bg-pastel"
+                  selectedCategory === cat.slug ? "bg-primary text-white" : "bg-white text-dark/70 hover:bg-pastel"
                 }`}
               >
                 <span>{cat.icon}</span>
@@ -87,7 +108,7 @@ export default function ProductosPage() {
                 >
                   <div className="relative">
                     <Image
-                      src={product.image}
+                      src={product.image ?? "/placeholder-product.svg"}
                       alt={product.name}
                       width={300}
                       height={300}
@@ -109,9 +130,9 @@ export default function ProductosPage() {
                   </div>
                   <div className="p-4">
                     <h3 className="font-display text-dark text-base font-semibold mb-1">{product.name}</h3>
-                    <p className="font-body text-primary font-bold text-lg mb-3">{product.price}</p>
+                    <p className="font-body text-primary font-bold text-lg mb-3">{product.priceFormatted}</p>
                     <button
-                      onClick={() => addItem({ id: product.id, name: product.name, price: product.price, image: product.image })}
+                      onClick={() => handleAdd(product)}
                       className="block w-full bg-primary text-white text-center font-semibold py-2.5 rounded-full text-sm hover:scale-105 transition-transform cursor-pointer"
                     >
                       Agregar

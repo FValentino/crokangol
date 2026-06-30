@@ -1,18 +1,22 @@
 import { Repository } from "typeorm"
 import { Order, OrderStatus } from "./Order.entity"
+import { OrderItem } from "./OrderItem.entity"
 import { getDataSource } from "@/backend/lib/database"
 
 export class OrderRepository {
   private repo: Repository<Order>
+  private itemRepo: Repository<OrderItem>
 
   constructor() {
     this.repo = {} as Repository<Order>
+    this.itemRepo = {} as Repository<OrderItem>
   }
 
   private async getRepo(): Promise<Repository<Order>> {
     if (!this.repo.manager) {
       const ds = await getDataSource()
       this.repo = ds.getRepository(Order)
+      this.itemRepo = ds.getRepository(OrderItem)
     }
     return this.repo
   }
@@ -21,7 +25,7 @@ export class OrderRepository {
     const repo = await this.getRepo()
     return repo.find({
       where: { store: { id: storeId } },
-      relations: { items: true, client: true },
+      relations: { client: true },
       order: { createdAt: "DESC" },
     })
   }
@@ -30,7 +34,7 @@ export class OrderRepository {
     const repo = await this.getRepo()
     return repo.findOne({
       where: { id },
-      relations: { items: true, client: true },
+      relations: { client: true },
     })
   }
 
@@ -38,7 +42,6 @@ export class OrderRepository {
     const repo = await this.getRepo()
     return repo.find({
       where: { client: { id: clientId } },
-      relations: { items: true },
       order: { createdAt: "DESC" },
     })
   }
@@ -50,14 +53,24 @@ export class OrderRepository {
     const repo = await this.getRepo()
     return repo.find({
       where: { store: { id: storeId }, status },
-      relations: { items: true, client: true },
+      relations: { client: true },
       order: { createdAt: "DESC" },
     })
+  }
+
+  async findItemsByOrderId(orderId: string): Promise<OrderItem[]> {
+    await this.getRepo()
+    return this.itemRepo.find({ where: { order: { id: orderId } } })
   }
 
   async save(order: Order): Promise<Order> {
     const repo = await this.getRepo()
     return repo.save(order)
+  }
+
+  async saveItem(item: OrderItem): Promise<OrderItem> {
+    await this.getRepo()
+    return this.itemRepo.save(item)
   }
 
   async update(

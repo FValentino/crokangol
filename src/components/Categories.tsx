@@ -1,4 +1,9 @@
-import { categories } from "@/data/mock"
+"use client"
+
+import { useEffect, useState } from "react"
+import { getCatalogCategories } from "@/backend/features/catalog/CatalogActions"
+import { mapCategoryToCatalog } from "@/lib/mappers"
+import type { CatalogCategory } from "@/lib/types"
 import FloatingCandies from "./FloatingCandies"
 
 const candies = [
@@ -13,6 +18,12 @@ const candies = [
 ]
 
 export default function Categories() {
+  const [categories, setCategories] = useState<CatalogCategory[]>([])
+
+  useEffect(() => {
+    getCatalogCategories().then((cats) => setCategories(cats.map(mapCategoryToCatalog)))
+  }, [])
+
   return (
     <section id="categorias" className="relative py-20 bg-cream overflow-hidden">
       <FloatingCandies candies={candies} />

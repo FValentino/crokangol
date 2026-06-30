@@ -41,21 +41,25 @@ export class OrderService {
     order.client = { id: input.clientId } as Client
     order.notes = input.notes ?? null
     order.status = "pending"
+    order.total = 0
+
+    const saved = await this.repository.save(order)
 
     let total = 0
-    order.items = input.items.map((item) => {
+    for (const item of input.items) {
       const orderItem = new OrderItem()
+      orderItem.order = saved
       orderItem.productId = item.productId ?? null
       orderItem.productName = item.productName
       orderItem.unitPrice = item.unitPrice
       orderItem.quantity = item.quantity
       orderItem.subtotal = item.unitPrice * item.quantity
       total += orderItem.subtotal
-      return orderItem
-    })
+      await this.repository.saveItem(orderItem)
+    }
 
-    order.total = total
-    return this.repository.save(order)
+    saved.total = total
+    return this.repository.save(saved)
   }
 
   async updateStatus(

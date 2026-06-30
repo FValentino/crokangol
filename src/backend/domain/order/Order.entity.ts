@@ -6,11 +6,9 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
-  OneToMany,
 } from "typeorm"
 import { Store } from "@/backend/domain/store/Store.entity"
 import { Client } from "@/backend/domain/client/Client.entity"
-import { OrderItem } from "./OrderItem.entity"
 
 export type OrderStatus =
   | "pending"
@@ -41,9 +39,6 @@ export class Order {
 
   @Column({ type: "text", nullable: true })
   notes!: string | null
-
-  @OneToMany(() => OrderItem, (item) => item.order, { cascade: true })
-  items!: OrderItem[]
 
   @CreateDateColumn()
   createdAt!: Date

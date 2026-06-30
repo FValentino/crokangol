@@ -2,26 +2,20 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  ManyToOne,
-  JoinColumn,
   CreateDateColumn,
   UpdateDateColumn,
 } from "typeorm"
-import { Store } from "@/backend/domain/store/Store.entity"
-import { Product } from "./Product.entity"
 
 @Entity("product_photos")
 export class ProductPhoto {
   @PrimaryGeneratedColumn("uuid")
   id!: string
 
-  @ManyToOne(() => Store)
-  @JoinColumn({ name: "store_id" })
-  store!: Store
+  @Column({ type: "uuid", name: "store_id" })
+  storeId!: string
 
-  @ManyToOne(() => Product, (product) => product.photos, { onDelete: "CASCADE" })
-  @JoinColumn({ name: "product_id" })
-  product!: Product
+  @Column({ type: "uuid", name: "product_id" })
+  productId!: string
 
   @Column({ type: "varchar", length: 500 })
   url!: string

@@ -29,7 +29,8 @@ export class CartService {
     if (!storeProduct) throw new Error("Product not found")
     if (!storeProduct.product.active) throw new Error("Product is not active")
 
-    const existing = cart.items.find((i) => i.productId === productId)
+    const items = await this.cartRepo.findItemsByCartId(cart.id)
+    const existing = items.find((i) => i.productId === productId)
     if (existing) {
       existing.quantity += quantity
       existing.subtotal = existing.unitPrice * existing.quantity
@@ -39,14 +40,14 @@ export class CartService {
       item.cart = cart
       item.productId = productId
       item.productName = storeProduct.product.name
-      item.productImage = storeProduct.product.photos?.find((p) => p.isPrimary)?.url ?? null
+      item.productImage = null
       item.unitPrice = storeProduct.price
       item.quantity = quantity
       item.subtotal = storeProduct.price * quantity
-      cart.items.push(item)
+      await this.cartRepo.saveItem(item)
     }
 
-    return this.cartRepo.save(cart)
+    return cart
   }
 
   async updateItemQuantity(
@@ -57,14 +58,15 @@ export class CartService {
     const cart = await this.cartRepo.findByToken(token)
     if (!cart) throw new Error("Cart not found")
 
-    const item = cart.items.find((i) => i.id === itemId)
+    const items = await this.cartRepo.findItemsByCartId(cart.id)
+    const item = items.find((i) => i.id === itemId)
     if (!item) throw new Error("Item not found in cart")
 
     item.quantity = quantity
     item.subtotal = item.unitPrice * quantity
     await this.cartRepo.saveItem(item)
 
-    return this.cartRepo.findByToken(token) as Promise<Cart>
+    return cart
   }
 
   async removeItem(token: string, itemId: string): Promise<Cart> {
@@ -72,7 +74,7 @@ export class CartService {
     if (!cart) throw new Error("Cart not found")
 
     await this.cartRepo.deleteItem(itemId)
-    return this.cartRepo.findByToken(token) as Promise<Cart>
+    return cart
   }
 
   async clearCart(token: string): Promise<void> {

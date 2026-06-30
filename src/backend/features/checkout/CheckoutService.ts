@@ -43,7 +43,9 @@ export class CheckoutService {
   async checkout(input: CheckoutInput): Promise<CheckoutResult> {
     const cart = await this.cartRepo.findByToken(input.token)
     if (!cart) throw new Error("Cart not found")
-    if (cart.items.length === 0) throw new Error("Cart is empty")
+
+    const items = await this.cartRepo.findItemsByCartId(cart.id)
+    if (items.length === 0) throw new Error("Cart is empty")
     if (cart.status !== "active") throw new Error("Cart already checked out")
 
     const storeId = cart.store.id
@@ -62,8 +64,8 @@ export class CheckoutService {
     const order = await this.orderService.create({
       storeId,
       clientId: client.id,
-      notes: null,
-      items: cart.items.map((item) => ({
+      notes: undefined,
+      items: items.map((item) => ({
         productId: item.productId ?? undefined,
         productName: item.productName,
         unitPrice: item.unitPrice,
@@ -82,7 +84,7 @@ export class CheckoutService {
     const message = buildOrderMessage(
       input.storeName,
       clientName,
-      order.items.map((i) => ({
+      items.map((i) => ({
         productName: i.productName,
         quantity: i.quantity,
         subtotal: i.subtotal,

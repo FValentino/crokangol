@@ -20,7 +20,6 @@ export async function getOrCreateCartToken(domain: string): Promise<string> {
   const cart = new Cart()
   cart.token = token
   cart.store = store
-  cart.items = []
   await cartRepo.save(cart)
 
   cookieStore.set(TOKEN_COOKIE, token, {

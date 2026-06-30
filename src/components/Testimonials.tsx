@@ -1,5 +1,11 @@
-import { testimonials } from "@/data/mock"
 import FloatingCandies from "./FloatingCandies"
+
+const testimonials = [
+  { id: "t1", name: "María G.", text: "Excelente atención y gran variedad de productos. Siempre encuentro lo que busco para los cumpleaños de mis hijos.", rating: 5 },
+  { id: "t2", name: "Carlos M.", text: "Los mejores precios del barrio y la calidad es inmejorable. Muy recomendable.", rating: 5 },
+  { id: "t3", name: "Laura P.", text: "Hago todos mis pedidos por WhatsApp y me llegan en el día. Súper práctico y confiable.", rating: 5 },
+  { id: "t4", name: "José R.", text: "La atención personalizada es lo que más valoro. Siempre tienen lo último en golosinas.", rating: 4 },
+]
 
 const candies = [
   { emoji: "🍬", position: { top: "5%", left: "3%" }, animation: "float-delayed" as const, size: "text-2xl" },

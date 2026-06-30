@@ -6,10 +6,8 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
-  OneToMany,
 } from "typeorm"
 import { Store } from "@/backend/domain/store/Store.entity"
-import { CartItem } from "./CartItem.entity"
 
 export type CartStatus = "active" | "checked_out" | "abandoned"
 
@@ -30,9 +28,6 @@ export class Cart {
 
   @Column({ type: "timestamp", nullable: true, name: "expires_at" })
   expiresAt!: Date | null
-
-  @OneToMany(() => CartItem, (item) => item.cart, { cascade: true })
-  items!: CartItem[]
 
   @CreateDateColumn()
   createdAt!: Date

@@ -21,7 +21,7 @@ export class StoreProductRepository {
     const repo = await this.getRepo()
     return repo.find({
       where: { store: { id: storeId }, active: true },
-      relations: { product: { photos: true }, category: true },
+      relations: { product: true, category: true },
       order: { product: { name: "ASC" } },
     })
   }
@@ -33,7 +33,7 @@ export class StoreProductRepository {
     const repo = await this.getRepo()
     return repo.find({
       where: { store: { id: storeId }, category: { id: categoryId }, active: true },
-      relations: { product: { photos: true }, category: true },
+      relations: { product: true, category: true },
     })
   }
 
@@ -44,7 +44,7 @@ export class StoreProductRepository {
     const repo = await this.getRepo()
     return repo.findOne({
       where: { store: { id: storeId }, product: { slug }, active: true },
-      relations: { product: { photos: true }, category: true },
+      relations: { product: true, category: true },
     })
   }
 
@@ -55,7 +55,7 @@ export class StoreProductRepository {
     const repo = await this.getRepo()
     return repo.findOne({
       where: { store: { id: storeId }, product: { id: productId } },
-      relations: { product: { photos: true } },
+      relations: { product: true },
     })
   }
 
@@ -63,7 +63,7 @@ export class StoreProductRepository {
     const repo = await this.getRepo()
     return repo.findOne({
       where: { id },
-      relations: { product: { photos: true }, category: true, store: true },
+      relations: { product: true, category: true, store: true },
     })
   }
 

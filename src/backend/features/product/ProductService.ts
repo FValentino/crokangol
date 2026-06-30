@@ -45,7 +45,6 @@ export class ProductService {
     product.widthCm = data.widthCm
     product.quantity = data.quantity
     product.description = data.description ?? null
-    product.photos = []
     return this.repository.save(product)
   }
 

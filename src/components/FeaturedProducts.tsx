@@ -1,7 +1,10 @@
 "use client"
 
-import { useRef } from "react"
-import { products } from "@/data/mock"
+import { useRef, useEffect, useState } from "react"
+import { getCatalogProducts } from "@/backend/features/catalog/CatalogActions"
+import { addToCart } from "@/backend/features/cart/CartActions"
+import { mapStoreProductToCatalog } from "@/lib/mappers"
+import type { CatalogProduct } from "@/lib/types"
 import Image from "next/image"
 import FloatingCandies from "./FloatingCandies"
 import { useCart } from "@/context/CartContext"
@@ -19,13 +22,25 @@ const candies = [
 
 export default function FeaturedProducts() {
   const { addItem } = useCart()
+  const [products, setProducts] = useState<CatalogProduct[]>([])
   const scrollRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    getCatalogProducts().then((storeProducts) => {
+      setProducts(storeProducts.map(mapStoreProductToCatalog))
+    })
+  }, [])
 
   const scroll = (dir: "left" | "right") => {
     if (!scrollRef.current) return
     const card = scrollRef.current.querySelector<HTMLElement>("[data-card]")
     const step = card ? card.offsetWidth + 24 : 260
     scrollRef.current.scrollBy({ left: dir === "left" ? -step : step, behavior: "smooth" })
+  }
+
+  const handleAdd = async (p: CatalogProduct) => {
+    addItem({ id: p.id, name: p.name, price: p.priceFormatted, image: p.image ?? "/placeholder-product.svg" })
+    await addToCart(p.id, 1)
   }
 
   return (
@@ -68,7 +83,7 @@ export default function FeaturedProducts() {
             >
               <div className="relative">
                 <Image
-                  src={product.image}
+                  src={product.image ?? "/placeholder-product.svg"}
                   alt={product.name}
                   width={300}
                   height={300}
@@ -92,9 +107,9 @@ export default function FeaturedProducts() {
                 <h3 className="font-display text-dark text-base font-semibold mb-1">
                   {product.name}
                 </h3>
-                <p className="font-body text-primary font-bold text-lg mb-3">{product.price}</p>
+                <p className="font-body text-primary font-bold text-lg mb-3">{product.priceFormatted}</p>
                 <button
-                  onClick={() => addItem({ id: product.id, name: product.name, price: product.price, image: product.image })}
+                  onClick={() => handleAdd(product)}
                   className="block w-full bg-primary text-white text-center font-semibold py-2.5 rounded-full text-sm hover:scale-105 transition-transform cursor-pointer"
                 >
                   Agregar

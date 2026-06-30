@@ -8,6 +8,7 @@ function createMockCartRepo() {
   return {
     findByToken: vi.fn(),
     findById: vi.fn(),
+    findItemsByCartId: vi.fn(),
     save: vi.fn((cart: Cart) => Promise.resolve(cart)),
     saveItem: vi.fn((item: CartItem) => Promise.resolve(item)),
     deleteItem: vi.fn(),
@@ -30,7 +31,6 @@ function makeCart(overrides: Record<string, unknown> = {}): Cart {
     store: mockStore as Cart["store"],
     status: "active",
     expiresAt: null,
-    items: [],
     createdAt: new Date(),
     updatedAt: new Date(),
     ...overrides,
@@ -96,16 +96,21 @@ describe("CartService", () => {
       const sp = makeStoreProduct()
 
       cartRepo.findByToken.mockResolvedValue(cart)
+      cartRepo.findItemsByCartId.mockResolvedValue([])
       storeProductRepo.findByStoreAndProductId.mockResolvedValue(sp)
 
-      const result = await service.addItem("token-1", "prod-1", 2)
+      await service.addItem("token-1", "prod-1", 2)
 
-      expect(result.items).toHaveLength(1)
-      expect(result.items[0].productName).toBe("Chocolate")
-      expect(result.items[0].quantity).toBe(2)
-      expect(result.items[0].unitPrice).toBe(100)
-      expect(result.items[0].subtotal).toBe(200)
-      expect(cartRepo.save).toHaveBeenCalled()
+      expect(cartRepo.saveItem).toHaveBeenCalledWith(
+        expect.objectContaining({
+          productId: "prod-1",
+          productName: "Chocolate",
+          quantity: 2,
+          unitPrice: 100,
+          subtotal: 200,
+        })
+      )
+      expect(cartRepo.saveItem).toHaveBeenCalledTimes(1)
     })
 
     it("should increment quantity if product already in cart", async () => {
@@ -116,18 +121,19 @@ describe("CartService", () => {
         unitPrice: 100,
         quantity: 1,
         subtotal: 100,
-      }
-      const cart = makeCart({ items: [existingItem] })
+      } as CartItem
+      const cart = makeCart()
       const sp = makeStoreProduct()
 
       cartRepo.findByToken.mockResolvedValue(cart)
+      cartRepo.findItemsByCartId.mockResolvedValue([existingItem])
       storeProductRepo.findByStoreAndProductId.mockResolvedValue(sp)
 
-      const result = await service.addItem("token-1", "prod-1", 2)
+      await service.addItem("token-1", "prod-1", 2)
 
-      expect(result.items).toHaveLength(1)
       expect(existingItem.quantity).toBe(3)
       expect(existingItem.subtotal).toBe(300)
+      expect(cartRepo.saveItem).toHaveBeenCalledWith(existingItem)
     })
 
     it("should throw if product not found", async () => {
@@ -162,11 +168,10 @@ describe("CartService", () => {
         quantity: 1,
         subtotal: 100,
       }
-      const cart = makeCart({ items: [item] })
+      const cart = makeCart()
 
       cartRepo.findByToken.mockResolvedValue(cart)
-      cartRepo.findByToken.mockResolvedValueOnce(cart)
-      cartRepo.findByToken.mockResolvedValueOnce({ ...cart, items: [{ ...item, quantity: 3, subtotal: 300 }] })
+      cartRepo.findItemsByCartId.mockResolvedValue([item])
 
       await service.updateItemQuantity("token-1", "item-1", 3)
 
@@ -178,6 +183,7 @@ describe("CartService", () => {
     it("should throw if item not in cart", async () => {
       const cart = makeCart()
       cartRepo.findByToken.mockResolvedValue(cart)
+      cartRepo.findItemsByCartId.mockResolvedValue([])
 
       await expect(
         service.updateItemQuantity("token-1", "nonexistent", 2)
@@ -189,8 +195,6 @@ describe("CartService", () => {
     it("should remove item from cart", async () => {
       const cart = makeCart()
       cartRepo.findByToken.mockResolvedValue(cart)
-      cartRepo.findByToken.mockResolvedValueOnce(cart)
-      cartRepo.findByToken.mockResolvedValueOnce(cart)
 
       await service.removeItem("token-1", "item-1")
 

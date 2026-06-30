@@ -1,3 +1,4 @@
+import "reflect-metadata"
 import type { Metadata } from "next";
 import { Fredoka, Poppins } from "next/font/google";
 import Navbar from "@/components/Navbar";

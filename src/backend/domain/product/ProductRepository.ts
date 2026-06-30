@@ -19,23 +19,17 @@ export class ProductRepository {
 
   async findAll(): Promise<Product[]> {
     const repo = await this.getRepo()
-    return repo.find({ where: { active: true }, relations: { photos: true } })
+    return repo.find({ where: { active: true } })
   }
 
   async findById(id: string): Promise<Product | null> {
     const repo = await this.getRepo()
-    return repo.findOne({
-      where: { id },
-      relations: { photos: true },
-    })
+    return repo.findOne({ where: { id } })
   }
 
   async findBySlug(slug: string): Promise<Product | null> {
     const repo = await this.getRepo()
-    return repo.findOne({
-      where: { slug },
-      relations: { photos: true },
-    })
+    return repo.findOne({ where: { slug } })
   }
 
   async save(product: Product): Promise<Product> {

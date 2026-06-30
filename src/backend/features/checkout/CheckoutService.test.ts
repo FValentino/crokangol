@@ -4,6 +4,7 @@ import { CheckoutService } from "./CheckoutService"
 function createMockCartRepo() {
   return {
     findByToken: vi.fn(),
+    findItemsByCartId: vi.fn(),
     save: vi.fn((cart: unknown) => Promise.resolve(cart)),
   }
 }
@@ -32,21 +33,23 @@ const baseInput = {
   },
 }
 
+const mockCartItems = [
+  {
+    id: "ci-1",
+    productId: "prod-1",
+    productName: "Chocolate",
+    unitPrice: 100,
+    quantity: 2,
+    subtotal: 200,
+  },
+]
+
 function makeCart(overrides: Record<string, unknown> = {}) {
   return {
     id: "cart-1",
     token: "token-1",
     store: { id: "store-1" },
     status: "active",
-    items: [
-      {
-        productId: "prod-1",
-        productName: "Chocolate",
-        unitPrice: 100,
-        quantity: 2,
-        subtotal: 200,
-      },
-    ],
     ...overrides,
   }
 }
@@ -74,13 +77,6 @@ function makeOrder(overrides: Record<string, unknown> = {}) {
     total: 200,
     status: "pending",
     notes: null,
-    items: [
-      {
-        productName: "Chocolate",
-        quantity: 2,
-        subtotal: 200,
-      },
-    ],
     ...overrides,
   }
 }
@@ -105,6 +101,7 @@ describe("CheckoutService", () => {
     const order = makeOrder()
 
     cartRepo.findByToken.mockResolvedValue(cart)
+    cartRepo.findItemsByCartId.mockResolvedValue(mockCartItems)
     clientService.create.mockResolvedValue(client)
     orderService.create.mockResolvedValue(order)
 
@@ -124,13 +121,15 @@ describe("CheckoutService", () => {
   })
 
   it("should throw if cart is empty", async () => {
-    cartRepo.findByToken.mockResolvedValue(makeCart({ items: [] }))
+    cartRepo.findByToken.mockResolvedValue(makeCart())
+    cartRepo.findItemsByCartId.mockResolvedValue([])
 
     await expect(service.checkout(baseInput)).rejects.toThrow("Cart is empty")
   })
 
   it("should throw if cart already checked out", async () => {
     cartRepo.findByToken.mockResolvedValue(makeCart({ status: "checked_out" }))
+    cartRepo.findItemsByCartId.mockResolvedValue(mockCartItems)
 
     await expect(service.checkout(baseInput)).rejects.toThrow(
       "Cart already checked out"
@@ -143,6 +142,7 @@ describe("CheckoutService", () => {
     const order = makeOrder()
 
     cartRepo.findByToken.mockResolvedValue(cart)
+    cartRepo.findItemsByCartId.mockResolvedValue(mockCartItems)
     clientService.create.mockResolvedValue(client)
     orderService.create.mockResolvedValue(order)
 
@@ -162,7 +162,7 @@ describe("CheckoutService", () => {
     expect(orderService.create).toHaveBeenCalledWith({
       storeId: "store-1",
       clientId: "client-1",
-      notes: null,
+      notes: undefined,
       items: [
         {
           productId: "prod-1",
@@ -180,6 +180,7 @@ describe("CheckoutService", () => {
     const order = makeOrder()
 
     cartRepo.findByToken.mockResolvedValue(cart)
+    cartRepo.findItemsByCartId.mockResolvedValue(mockCartItems)
     clientService.create.mockResolvedValue(client)
     orderService.create.mockResolvedValue(order)
 

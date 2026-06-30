@@ -1,6 +1,8 @@
 "use client"
 
 import { createContext, useContext, useState, useCallback, useMemo } from "react"
+import { addToCart as addToCartAction } from "@/backend/features/cart/CartActions"
+import { checkout as checkoutAction } from "@/backend/features/checkout/CheckoutActions"
 
 export interface CartItem {
   id: string
@@ -21,6 +23,7 @@ interface CartContextType {
   totalPrice: number
   open: boolean
   setOpen: (v: boolean) => void
+  checkout: (data: { firstName: string; lastName: string; phone: string; email?: string }) => Promise<string>
 }
 
 const CartContext = createContext<CartContextType | null>(null)
@@ -54,6 +57,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       ]
     })
     setOpen(true)
+    addToCartAction(product.id, 1).catch(console.error)
   }, [])
 
   const removeItem = useCallback((id: string) => {
@@ -70,12 +74,30 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const clearCart = useCallback(() => setItems([]), [])
 
+  const checkout = useCallback(
+    async (data: { firstName: string; lastName: string; phone: string; email?: string }) => {
+      const result = await checkoutAction({
+        client: {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          type: "individual" as any,
+          firstName: data.firstName,
+          lastName: data.lastName,
+          phone: data.phone,
+          email: data.email,
+        },
+      })
+      setItems([])
+      return result.whatsappLink
+    },
+    [],
+  )
+
   const totalItems = useMemo(() => items.reduce((s, i) => s + i.quantity, 0), [items])
   const totalPrice = useMemo(() => items.reduce((s, i) => s + i.priceValue * i.quantity, 0), [items])
 
   return (
     <CartContext.Provider
-      value={{ items, addItem, removeItem, updateQuantity, clearCart, totalItems, totalPrice, open, setOpen }}
+      value={{ items, addItem, removeItem, updateQuantity, clearCart, totalItems, totalPrice, open, setOpen, checkout }}
     >
       {children}
     </CartContext.Provider>

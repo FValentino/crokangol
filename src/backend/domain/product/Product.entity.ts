@@ -4,9 +4,7 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
-  OneToMany,
 } from "typeorm"
-import { ProductPhoto } from "./ProductPhoto.entity"
 
 @Entity("products")
 export class Product {
@@ -39,9 +37,6 @@ export class Product {
 
   @Column({ type: "boolean", default: true })
   active!: boolean
-
-  @OneToMany(() => ProductPhoto, (photo) => photo.product, { cascade: true })
-  photos!: ProductPhoto[]
 
   @CreateDateColumn()
   createdAt!: Date

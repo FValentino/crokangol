@@ -23,18 +23,17 @@ export class CartRepository {
 
   async findByToken(token: string): Promise<Cart | null> {
     const repo = await this.getRepo()
-    return repo.findOne({
-      where: { token },
-      relations: { items: true },
-    })
+    return repo.findOne({ where: { token } })
   }
 
   async findById(id: string): Promise<Cart | null> {
     const repo = await this.getRepo()
-    return repo.findOne({
-      where: { id },
-      relations: { items: true },
-    })
+    return repo.findOne({ where: { id } })
+  }
+
+  async findItemsByCartId(cartId: string): Promise<CartItem[]> {
+    await this.getRepo()
+    return this.itemRepo.find({ where: { cart: { id: cartId } } })
   }
 
   async save(cart: Cart): Promise<Cart> {
