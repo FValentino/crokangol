@@ -30,7 +30,7 @@ export async function getCartItems(): Promise<{
     productId: item.productId,
     productName: item.productName,
     productImage: item.productImage,
-    unitPrice: item.unitPrice,
+    unitPrice: Number(item.unitPrice),
     quantity: item.quantity,
   }))
 }

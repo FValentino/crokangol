@@ -87,9 +87,9 @@ export class CheckoutService {
       items.map((i) => ({
         productName: i.productName,
         quantity: i.quantity,
-        subtotal: i.subtotal,
+        subtotal: Number(i.subtotal),
       })),
-      order.total
+      Number(order.total)
     )
 
     const whatsappLink = generateWhatsAppLink(input.storePhone, message)
@@ -97,7 +97,7 @@ export class CheckoutService {
     return {
       orderId: order.id,
       whatsappLink,
-      total: order.total,
+      total: Number(order.total),
     }
   }
 }
