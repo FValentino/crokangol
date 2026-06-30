@@ -73,11 +73,11 @@ export class StoreProductRepository {
 
   async findByStoreAndProductId(
     storeId: string,
-    productId: string
+    storeProductId: string
   ): Promise<StoreProduct | null> {
     const repo = await this.getRepo()
     return repo.findOne({
-      where: { store: { id: storeId }, product: { id: productId } },
+      where: { id: storeProductId, store: { id: storeId } },
       relations: { product: { photos: true } },
     })
   }
