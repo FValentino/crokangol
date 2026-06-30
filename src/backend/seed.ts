@@ -33,6 +33,7 @@ interface ProductSeed {
   offerPrice?: number
   offerUntil?: string
   categorySlug: string
+  imageUrl?: string
 }
 
 const categories: { name: string; slug: string }[] = [
@@ -52,6 +53,7 @@ const products: ProductSeed[] = [
     lengthCm: 15, heightCm: 7, widthCm: 1,
     quantity: 50, price: 1200, priceType: "per_unit", minQuantity: 1,
     categorySlug: "chocolates",
+    imageUrl: "https://images.unsplash.com/photo-1549007994-cb92caebd54b?w=400",
   },
   {
     name: "Bombones Surtidos",
@@ -61,6 +63,7 @@ const products: ProductSeed[] = [
     lengthCm: 20, heightCm: 15, widthCm: 3,
     quantity: 30, price: 2500, priceType: "per_unit", minQuantity: 1,
     categorySlug: "chocolates",
+    imageUrl: "https://images.unsplash.com/photo-1606312619070-d48b4c652a52?w=400",
   },
   {
     name: "Chocolate con Maní",
@@ -70,6 +73,7 @@ const products: ProductSeed[] = [
     lengthCm: 12, heightCm: 6, widthCm: 1,
     quantity: 80, price: 900, priceType: "per_unit", minQuantity: 1,
     categorySlug: "chocolates",
+    imageUrl: "https://images.unsplash.com/photo-1606312619070-d48b4c652a52?w=400",
   },
 
   // Caramelos
@@ -82,6 +86,7 @@ const products: ProductSeed[] = [
     quantity: 100, price: 600, priceType: "per_unit", minQuantity: 1,
     offerPrice: 480, offerUntil: "2026-08-01",
     categorySlug: "caramelos",
+    imageUrl: "https://images.unsplash.com/photo-1570475735025-6cd1cd5c779d?w=400",
   },
   {
     name: "Paletas de Caramelo Duro",
@@ -91,6 +96,7 @@ const products: ProductSeed[] = [
     lengthCm: 15, heightCm: 10, widthCm: 5,
     quantity: 60, price: 800, priceType: "per_unit", minQuantity: 1,
     categorySlug: "caramelos",
+    imageUrl: "https://images.unsplash.com/photo-1581798459219-318e76ae3b32?w=400",
   },
   {
     name: "Gomitas Ácidas Ositos",
@@ -100,6 +106,7 @@ const products: ProductSeed[] = [
     lengthCm: 12, heightCm: 8, widthCm: 3,
     quantity: 90, price: 700, priceType: "per_unit", minQuantity: 1,
     categorySlug: "caramelos",
+    imageUrl: "https://images.unsplash.com/photo-1582058091505-f87a2c55a521?w=400",
   },
 
   // Galletitas
@@ -111,6 +118,7 @@ const products: ProductSeed[] = [
     lengthCm: 20, heightCm: 12, widthCm: 4,
     quantity: 40, price: 1500, priceType: "per_unit", minQuantity: 1,
     categorySlug: "galletitas",
+    imageUrl: "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400",
   },
   {
     name: "Galletitas de Coco",
@@ -120,6 +128,7 @@ const products: ProductSeed[] = [
     lengthCm: 15, heightCm: 10, widthCm: 3,
     quantity: 50, price: 1100, priceType: "per_unit", minQuantity: 1,
     categorySlug: "galletitas",
+    imageUrl: "https://images.unsplash.com/photo-1596050372449-3b0308593bf0?w=400",
   },
   {
     name: "Galletitas Saladas Integrales",
@@ -129,6 +138,7 @@ const products: ProductSeed[] = [
     lengthCm: 18, heightCm: 10, widthCm: 4,
     quantity: 35, price: 950, priceType: "per_unit", minQuantity: 1,
     categorySlug: "galletitas",
+    imageUrl: "https://images.unsplash.com/photo-1619546952812-520e98064a60?w=400",
   },
 
   // Snacks
@@ -140,6 +150,7 @@ const products: ProductSeed[] = [
     lengthCm: 15, heightCm: 10, widthCm: 3,
     quantity: 70, price: 1800, priceType: "per_unit", minQuantity: 1,
     categorySlug: "snacks",
+    imageUrl: "https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?w=400",
   },
   {
     name: "Papas Fritas Clásicas",
@@ -149,6 +160,7 @@ const products: ProductSeed[] = [
     lengthCm: 25, heightCm: 15, widthCm: 3,
     quantity: 100, price: 850, priceType: "per_unit", minQuantity: 1,
     categorySlug: "snacks",
+    imageUrl: "https://images.unsplash.com/photo-1613919113641-0afc2a0cf4b4?w=400",
   },
   {
     name: "Palitos Salados",
@@ -159,6 +171,7 @@ const products: ProductSeed[] = [
     quantity: 45, price: 650, priceType: "per_unit", minQuantity: 1,
     offerPrice: 520, offerUntil: "2026-07-20",
     categorySlug: "snacks",
+    imageUrl: "https://images.unsplash.com/photo-1614961234417-16e1e2e05ca2?w=400",
   },
 ]
 
@@ -213,6 +226,7 @@ async function seed() {
   // --- Products ---
   const productRepo = ds.getRepository(Product)
   const spRepo = ds.getRepository(StoreProduct)
+  const photoRepo = ds.getRepository(ProductPhoto)
 
   for (const p of products) {
     let product = await productRepo.findOneBy({ slug: p.slug })
@@ -230,6 +244,18 @@ async function seed() {
         active: true,
       })
       await productRepo.save(product)
+
+      // Add photo if imageUrl provided
+      if (p.imageUrl) {
+        const photo = photoRepo.create({
+          product,
+          storeId: store.id,
+          url: p.imageUrl,
+          isPrimary: true,
+          sortOrder: 0,
+        })
+        await photoRepo.save(photo)
+      }
     }
 
     // Link store → product → category

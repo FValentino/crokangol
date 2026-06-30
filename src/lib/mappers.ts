@@ -1,6 +1,13 @@
 import type { StoreProduct } from "@/backend/domain/store-product/StoreProduct.entity"
 import type { Category } from "@/backend/domain/category/Category.entity"
+import type { ProductPhoto } from "@/backend/domain/product/ProductPhoto.entity"
 import type { CatalogProduct, CatalogCategory } from "./types"
+
+function getPrimaryPhotoUrl(photos?: ProductPhoto[]): string | null {
+  if (!photos || photos.length === 0) return null
+  const primary = photos.find((p) => p.isPrimary)
+  return (primary ?? photos[0]).url
+}
 
 const categoryMeta: Record<string, { icon: string; bgColor: string; description: string }> = {
   chocolates: { icon: "🍫", bgColor: "bg-amber-50", description: "Tabletas, bombones y más" },
@@ -25,7 +32,7 @@ export function mapStoreProductToCatalog(sp: StoreProduct): CatalogProduct {
     slug: sp.product.slug,
     price: isOffer ? sp.offerPrice! : sp.price,
     priceFormatted: formatPrice(isOffer ? sp.offerPrice! : sp.price),
-    image: null,
+    image: getPrimaryPhotoUrl(sp.product.photos),
     categorySlug: sp.category?.slug ?? null,
     categoryName: sp.category?.name ?? null,
     badge: isOffer ? "Oferta" : null,

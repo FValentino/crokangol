@@ -4,7 +4,10 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  ManyToOne,
+  JoinColumn,
 } from "typeorm"
+import { Product } from "@/backend/domain/product/Product.entity"
 
 @Entity("product_photos")
 export class ProductPhoto {
@@ -14,8 +17,9 @@ export class ProductPhoto {
   @Column({ type: "uuid", name: "store_id" })
   storeId!: string
 
-  @Column({ type: "uuid", name: "product_id" })
-  productId!: string
+  @ManyToOne(() => Product, (product) => product.photos)
+  @JoinColumn({ name: "product_id" })
+  product!: Product
 
   @Column({ type: "varchar", length: 500 })
   url!: string

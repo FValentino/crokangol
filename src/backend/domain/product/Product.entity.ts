@@ -4,7 +4,9 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from "typeorm"
+import { ProductPhoto } from "@/backend/domain/product/ProductPhoto.entity"
 
 @Entity("products")
 export class Product {
@@ -34,6 +36,9 @@ export class Product {
 
   @Column({ type: "text", nullable: true })
   description!: string | null
+
+  @OneToMany(() => ProductPhoto, (photo) => photo.product)
+  photos!: ProductPhoto[]
 
   @Column({ type: "boolean", default: true })
   active!: boolean

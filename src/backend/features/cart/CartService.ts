@@ -40,7 +40,8 @@ export class CartService {
       item.cart = cart
       item.productId = productId
       item.productName = storeProduct.product.name
-      item.productImage = null
+      const primaryPhoto = storeProduct.product.photos?.find((p) => p.isPrimary) ?? storeProduct.product.photos?.[0]
+      item.productImage = primaryPhoto?.url ?? null
       item.unitPrice = storeProduct.price
       item.quantity = quantity
       item.subtotal = storeProduct.price * quantity
