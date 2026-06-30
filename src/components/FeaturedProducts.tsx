@@ -3,7 +3,6 @@
 import { useRef, useEffect, useState } from "react"
 import { getCatalogProducts } from "@/backend/features/catalog/CatalogActions"
 import { addToCart } from "@/backend/features/cart/CartActions"
-import { mapStoreProductToCatalog } from "@/lib/mappers"
 import type { CatalogProduct } from "@/lib/types"
 import FloatingCandies from "./FloatingCandies"
 import ProductCard from "./ProductCard"
@@ -31,8 +30,8 @@ export default function FeaturedProducts() {
 
   useEffect(() => {
     getCatalogProducts()
-      .then((storeProducts) => {
-        setProducts(storeProducts.map(mapStoreProductToCatalog))
+      .then((prods) => {
+        setProducts(prods)
       })
       .catch(() => setError(true))
       .finally(() => setIsLoading(false))

@@ -1,10 +1,8 @@
 "use client"
 
 import { useState, useMemo, useEffect, useCallback } from "react"
-import { getCatalogProducts } from "@/backend/features/catalog/CatalogActions"
-import { getCatalogCategories } from "@/backend/features/catalog/CatalogActions"
+import { getCatalogProducts, getCatalogCategories } from "@/backend/features/catalog/CatalogActions"
 import { addToCart } from "@/backend/features/cart/CartActions"
-import { mapStoreProductToCatalog, mapCategoryToCatalog } from "@/lib/mappers"
 import type { CatalogProduct, CatalogCategory } from "@/lib/types"
 import { useCart } from "@/context/CartContext"
 import { useRouter, usePathname } from "next/navigation"
@@ -40,8 +38,8 @@ export default function ProductosPage() {
 
   useEffect(() => {
     Promise.all([
-      getCatalogProducts().then((sp) => sp.map(mapStoreProductToCatalog)),
-      getCatalogCategories().then((cats) => cats.map(mapCategoryToCatalog)),
+      getCatalogProducts(),
+      getCatalogCategories(),
     ])
       .then(([prods, cats]) => {
         setProducts(prods)

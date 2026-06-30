@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react"
 import { getCatalogCategories } from "@/backend/features/catalog/CatalogActions"
-import { mapCategoryToCatalog } from "@/lib/mappers"
 import type { CatalogCategory } from "@/lib/types"
 import FloatingCandies from "./FloatingCandies"
 import { CategorySkeleton, ErrorDisplay } from "./Skeleton"
@@ -25,7 +24,7 @@ export default function Categories() {
 
   useEffect(() => {
     getCatalogCategories()
-      .then((cats) => setCategories(cats.map(mapCategoryToCatalog)))
+      .then((cats) => setCategories(cats))
       .catch(() => setError(true))
       .finally(() => setIsLoading(false))
   }, [])
