@@ -197,7 +197,7 @@ async function seed() {
       domain: DEV_DOMAIN,
       uuid: crypto.randomUUID(),
       address: "Av. Siempre Viva 123, Córdoba",
-      phone: "5493512345678",
+      phone: "5493624006615",
       email: "tienda@ejemplo.com",
       active: true,
     })
